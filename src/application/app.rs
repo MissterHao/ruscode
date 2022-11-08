@@ -4,66 +4,24 @@ use rand::{
 };
 use tui::widgets::ListState;
 
-const TASKS: [&str; 24] = [
-    "Item1", "Item2", "Item3", "Item4", "Item5", "Item6", "Item7", "Item8", "Item9", "Item10",
-    "Item11", "Item12", "Item13", "Item14", "Item15", "Item16", "Item17", "Item18", "Item19",
-    "Item20", "Item21", "Item22", "Item23", "Item24",
-];
+const TASKS: [&str; 3] = ["Item1", "Item2", "Item3"];
 
-const LOGS: [(&str, &str); 26] = [
+const LOGS: [(&str, &str); 6] = [
     ("Event1", "INFO"),
     ("Event2", "INFO"),
     ("Event3", "CRITICAL"),
     ("Event4", "ERROR"),
     ("Event5", "INFO"),
     ("Event6", "INFO"),
-    ("Event7", "WARNING"),
-    ("Event8", "INFO"),
-    ("Event9", "INFO"),
-    ("Event10", "INFO"),
-    ("Event11", "CRITICAL"),
-    ("Event12", "INFO"),
-    ("Event13", "INFO"),
-    ("Event14", "INFO"),
-    ("Event15", "INFO"),
-    ("Event16", "INFO"),
-    ("Event17", "ERROR"),
-    ("Event18", "ERROR"),
-    ("Event19", "INFO"),
-    ("Event20", "INFO"),
-    ("Event21", "WARNING"),
-    ("Event22", "INFO"),
-    ("Event23", "INFO"),
-    ("Event24", "WARNING"),
-    ("Event25", "INFO"),
-    ("Event26", "INFO"),
 ];
 
-const EVENTS: [(&str, u64); 24] = [
+const EVENTS: [(&str, u64); 6] = [
     ("B1", 9),
     ("B2", 12),
     ("B3", 5),
     ("B4", 8),
     ("B5", 2),
     ("B6", 4),
-    ("B7", 5),
-    ("B8", 9),
-    ("B9", 14),
-    ("B10", 15),
-    ("B11", 1),
-    ("B12", 0),
-    ("B13", 4),
-    ("B14", 6),
-    ("B15", 4),
-    ("B16", 6),
-    ("B17", 4),
-    ("B18", 7),
-    ("B19", 13),
-    ("B20", 8),
-    ("B21", 11),
-    ("B22", 9),
-    ("B23", 3),
-    ("B24", 5),
 ];
 
 #[derive(Clone)]
@@ -223,7 +181,7 @@ pub struct Server<'a> {
 
 pub enum ApplicationStatus {
     Quit,
-    Running
+    Running,
 }
 
 pub struct App<'a> {
@@ -239,7 +197,7 @@ pub struct App<'a> {
     pub barchart: Vec<(&'a str, u64)>,
     pub servers: Vec<Server<'a>>,
     pub enhanced_graphics: bool,
-    pub status: ApplicationStatus
+    pub status: ApplicationStatus,
 }
 
 impl<'a> App<'a> {
@@ -305,11 +263,10 @@ impl<'a> App<'a> {
                 },
             ],
             enhanced_graphics,
-
         }
     }
 
-    pub fn on_escape(&mut self) {
+    pub fn on_escape_application(&mut self) {
         self.status = ApplicationStatus::Quit;
     }
 
@@ -321,12 +278,8 @@ impl<'a> App<'a> {
         self.tasks.next();
     }
 
-    pub fn on_right(&mut self) {
-        self.tabs.next();
-    }
+    pub fn enter_in_workspace(&mut self) {
 
-    pub fn on_left(&mut self) {
-        self.tabs.previous();
     }
 
     pub fn on_key(&mut self, c: char) {
@@ -343,18 +296,18 @@ impl<'a> App<'a> {
 
     pub fn on_tick(&mut self) {
         // Update progress
-        self.progress += 0.001;
-        if self.progress > 1.0 {
-            self.progress = 0.0;
-        }
+        // self.progress += 0.001;
+        // if self.progress > 1.0 {
+        //     self.progress = 0.0;
+        // }
 
-        self.sparkline.on_tick();
-        self.signals.on_tick();
+        // self.sparkline.on_tick();
+        // self.signals.on_tick();
 
-        let log = self.logs.items.pop().unwrap();
-        self.logs.items.insert(0, log);
+        // let log = self.logs.items.pop().unwrap();
+        // self.logs.items.insert(0, log);
 
-        let event = self.barchart.pop().unwrap();
-        self.barchart.insert(0, event);
+        // let event = self.barchart.pop().unwrap();
+        // self.barchart.insert(0, event);
     }
 }

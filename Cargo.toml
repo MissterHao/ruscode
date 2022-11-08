@@ -2,6 +2,13 @@
 name = "ruscode"
 version = "0.1.0"
 edition = "2021"
+authors = ["Hao-Wei"]
+readme = "README.md"
+license = "MIT"
+description = "ruscode - A visual studio code's workspaces organizer written in Rust"
+homepage = "https://github.com/MissterHao/ruscode"
+repository = "https://github.com/MissterHao/ruscode"
+
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 

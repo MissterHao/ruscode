@@ -1,3 +1,5 @@
+use crate::application::app::App;
+use crate::presentation::ui;
 use crossterm::{
     event::{self, DisableMouseCapture, EnableMouseCapture, Event, KeyCode},
     execute,
@@ -12,9 +14,8 @@ use tui::{
     backend::{Backend, CrosstermBackend},
     Terminal,
 };
-use crate::application::app::App;
 
-pub async fn run(tick_rate: Duration, enhanced_graphics: bool) -> Result<(), Box<dyn Error>>  {
+pub async fn run(enhanced_graphics: bool) -> Result<(), Box<dyn Error>> {
     // setup terminal
     enable_raw_mode()?;
     let mut stdout = io::stdout();
@@ -24,7 +25,7 @@ pub async fn run(tick_rate: Duration, enhanced_graphics: bool) -> Result<(), Box
 
     // create app and run it
     let app = App::new("Crossterm Demo", enhanced_graphics);
-    let res = run_app(&mut terminal, app, tick_rate);
+    let res = run_app(&mut terminal, app);
 
     // restore terminal
     disable_raw_mode()?;
@@ -42,48 +43,39 @@ pub async fn run(tick_rate: Duration, enhanced_graphics: bool) -> Result<(), Box
     Ok(())
 }
 
-
-
-use crate::presentation::ui;
-
-fn run_app<B: Backend>(
-    terminal: &mut Terminal<B>,
-    mut app: App,
-    tick_rate: Duration,
-) -> io::Result<()> {
-    let mut last_tick = Instant::now();
+fn run_app<B: Backend>(terminal: &mut Terminal<B>, mut app: App) -> io::Result<()> {
+    // let mut last_tick = Instant::now();
     loop {
-        terminal.draw(|f| ui::draw(f, &mut app))?;
-
-        let timeout = tick_rate
-            .checked_sub(last_tick.elapsed())
-            .unwrap_or_else(|| Duration::from_secs(0));
-        if crossterm::event::poll(timeout)? {
-            if let Event::Key(key) = event::read()? {
-                match key.code {
-                    KeyCode::Esc => app.on_escape(),
-                    KeyCode::Char(c) => app.on_key(c),
-                    KeyCode::Left => app.on_left(),
-                    KeyCode::Up => app.on_up(),
-                    KeyCode::Right => app.on_right(),
-                    KeyCode::Down => app.on_down(),
-                    _ => {}
-                }
-            }
-        }
-        if last_tick.elapsed() >= tick_rate {
-            app.on_tick();
-            last_tick = Instant::now();
-        }
-
-
         match app.status {
+            // Exit the app without any error
             super::app::ApplicationStatus::Quit => {
                 return Ok(());
-            },
+            }
             super::app::ApplicationStatus::Running => {
-                continue;
-            },
+                terminal.draw(|f| ui::draw(f, &mut app))?;
+
+                // let timeout = tick_rate
+                //     .checked_sub(last_tick.elapsed())
+                //     .unwrap_or_else(|| Duration::from_secs(0));
+
+                if crossterm::event::poll(Duration::from_secs(0))? {
+                    if let Event::Key(key) = event::read()? {
+                        match key.code {
+                            KeyCode::Esc => app.on_escape_application(),
+                            KeyCode::Up => app.on_up(),
+                            KeyCode::Down => app.on_down(),
+                            KeyCode::Char(c) => app.on_key(c),
+                            KeyCode::Enter => app.enter_in_workspace(),
+                            _ => {}
+                        }
+                    }
+                }
+
+                // if last_tick.elapsed() >= tick_rate {
+                //     app.on_tick();
+                //     last_tick = Instant::now();
+                // }
+            }
         }
     }
 }
