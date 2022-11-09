@@ -15,7 +15,7 @@ use tui::{
     Terminal,
 };
 
-pub async fn run(enhanced_graphics: bool) -> Result<(), Box<dyn Error>> {
+pub async fn run(show_splash_screen: bool) -> Result<(), Box<dyn Error>> {
     // setup terminal
     enable_raw_mode()?;
     let mut stdout = io::stdout();
@@ -23,8 +23,8 @@ pub async fn run(enhanced_graphics: bool) -> Result<(), Box<dyn Error>> {
     let backend = CrosstermBackend::new(stdout);
     let mut terminal = Terminal::new(backend)?;
 
-    // create app and run it
-    let app = App::new("Crossterm Demo", enhanced_graphics);
+    // create ruscode app and run it
+    let app = App::new(" Ruscode ", show_splash_screen);
     let res = run_app(&mut terminal, app);
 
     // restore terminal
@@ -44,7 +44,7 @@ pub async fn run(enhanced_graphics: bool) -> Result<(), Box<dyn Error>> {
 }
 
 fn run_app<B: Backend>(terminal: &mut Terminal<B>, mut app: App) -> io::Result<()> {
-    // let mut last_tick = Instant::now();
+    let mut last_tick = Instant::now();
     loop {
         match app.status {
             // Exit the app without any error
@@ -54,14 +54,11 @@ fn run_app<B: Backend>(terminal: &mut Terminal<B>, mut app: App) -> io::Result<(
             super::app::ApplicationStatus::Running => {
                 terminal.draw(|f| ui::draw(f, &mut app))?;
 
-                // let timeout = tick_rate
-                //     .checked_sub(last_tick.elapsed())
-                //     .unwrap_or_else(|| Duration::from_secs(0));
-
                 if crossterm::event::poll(Duration::from_secs(0))? {
                     if let Event::Key(key) = event::read()? {
                         match key.code {
                             KeyCode::Esc => app.on_escape_application(),
+                            KeyCode::Tab => app.next_tab(),
                             KeyCode::Up => app.on_up(),
                             KeyCode::Down => app.on_down(),
                             KeyCode::Char(c) => app.on_key(c),
@@ -75,6 +72,12 @@ fn run_app<B: Backend>(terminal: &mut Terminal<B>, mut app: App) -> io::Result<(
                 //     app.on_tick();
                 //     last_tick = Instant::now();
                 // }
+            }
+            super::app::ApplicationStatus::SplashScreenReveal => {
+                terminal.draw(|f| ui::draw(f, &mut app))?;
+                if last_tick.elapsed() >= Duration::from_secs(1) {
+                    app.status = super::app::ApplicationStatus::Running;
+                }
             }
         }
     }

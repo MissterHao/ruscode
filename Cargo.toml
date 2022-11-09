@@ -4,21 +4,26 @@ version = "0.1.0"
 edition = "2021"
 authors = ["Hao-Wei"]
 readme = "README.md"
-license = "MIT"
+license-file = "LICENSE"
 description = "ruscode - A visual studio code's workspaces organizer written in Rust"
 homepage = "https://github.com/MissterHao/ruscode"
 repository = "https://github.com/MissterHao/ruscode"
-
+keywords = ["development-tools", "TUI", "command-line-utilities"]
+exclude = ["assets/*", ".github"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
 tui = { version = "0.19.0", features = ["crossterm"], default-features = false }
 crossterm = "0.25.0"
-
-log = "0.4" 
+log = "0.4"
 tui-logger = { git = "https://github.com/gin66/tui-logger", rev = "3a3568e2464dddc2205e071234135998342d7f1d" }
-
 tokio = { version = "1", features = ["full"] }
 chrono = { version = "0.4", features = ["serde"] }
-rand = "0.8.5"
+clap = { version = "4.0.22", features = ["derive"] }
+
+
+[profile.release]
+lto = true
+codegen-units = 1
+opt-level = 'z'
