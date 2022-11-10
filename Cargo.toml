@@ -21,6 +21,8 @@ tui-logger = { git = "https://github.com/gin66/tui-logger", rev = "3a3568e2464dd
 tokio = { version = "1", features = ["full"] }
 chrono = { version = "0.4", features = ["serde"] }
 clap = { version = "4.0.22", features = ["derive"] }
+glob = "0.3.0"
+futures = "0.3.25"
 
 
 [profile.release]
