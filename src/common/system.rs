@@ -28,7 +28,7 @@ impl SystemPaths {
         let home = SystemPaths::home_dir();
         if cfg!(target_os = "windows") {
             format!(
-                "{}/AppData/Roaming/Code/User/workspaceStorage/**/*.json",
+                "{}/AppData/Roaming/Code/User/workspaceStorage/**/workspace.json",
                 home,
             )
         } else {

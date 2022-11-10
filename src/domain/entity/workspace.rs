@@ -38,7 +38,7 @@ impl From<WorkspaceJson> for Workspace {
     fn from(_wj: WorkspaceJson) -> Self {
         let decode_folder_path = decode(_wj.folder.as_str()).expect("UTF-8").to_string();
 
-        let location = if _wj.folder.starts_with("file:///") {
+        let location = if _wj.folder.starts_with("file://") {
             WorkspaceLocation::Local
         } else if _wj.folder.starts_with("vscode-remote://") {
             WorkspaceLocation::Remote

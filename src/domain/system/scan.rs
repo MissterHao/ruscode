@@ -18,9 +18,15 @@ fn scan_vscode_workspacestorage_from_system() -> Result<Vec<String>, JoinError> 
     Ok(tasks)
 }
 
-fn extract_json_file(path: &str) -> WorkspaceJson {
+fn extract_json_file(path: &str) -> Option<WorkspaceJson> {
     let raw_json = fs::read_to_string(path).expect("Cannot read workspace from json");
-    serde_json::from_str(raw_json.as_str()).unwrap()
+    match serde_json::from_str(raw_json.as_str()) {
+        Ok(val) => Some(val),
+        Err(_) => {
+            // println!("Error!! => {}", path);
+            None
+        }
+    }
 }
 
 pub fn scan_workspaces_path() {
@@ -31,7 +37,7 @@ pub fn scan_workspaces_path() {
     use std::thread;
 
     // Spawn a thread channel between app and new thread
-    let (tx, rx): (Sender<Workspace>, Receiver<Workspace>) = mpsc::channel();
+    let (tx, rx): (Sender<Option<Workspace>>, Receiver<Option<Workspace>>) = mpsc::channel();
 
     let mut children = Vec::new();
 
@@ -41,14 +47,20 @@ pub fn scan_workspaces_path() {
         let child = thread::spawn(move || {
             let data = extract_json_file(json_path.as_str());
 
-            thread_tx.send(data.into()).unwrap();
+            match data {
+                Some(val) => {
+                    thread_tx.send(Some(Workspace::from(val)));
+                }
+                None => {
+                    thread_tx.send(None);
+                }
+            }
         });
 
         children.push(child);
     }
 
     // Show the order in which the messages were sent
-    println!("{:?}", children);
 
     let mut result = Vec::new();
 
@@ -64,6 +76,8 @@ pub fn scan_workspaces_path() {
     }
 
     for r in result {
-        println!("{:?}", r.unwrap().location_type);
+        if let Some(val) = r.unwrap() {
+            println!("{:?}", val.location_type);
+        }
     }
 }
