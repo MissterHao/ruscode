@@ -2,13 +2,13 @@ use crate::application::app::App;
 use tui::{
     backend::Backend,
     layout::{Alignment, Constraint, Direction, Layout, Rect},
-    style::{Color, Modifier, Style},
-    symbols,
+    style::{Color, Style},
     text::{Span, Spans},
-    widgets::canvas::{Line, Rectangle},
-    widgets::{Block, Borders, Cell, Dataset, List, ListItem, Paragraph, Row, Table, Tabs, Wrap},
+    widgets::{Block, Borders, Paragraph, Tabs},
     Frame,
 };
+
+use super::management::{draw_management_content_info_block, draw_management_control_block};
 
 const FIGLET_ASCII_LOGO: &'static str = r#"
 
@@ -105,15 +105,12 @@ where
     B: Backend,
 {
     let chunks = Layout::default()
-        .constraints(
-            [
-                Constraint::Length(9),
-                Constraint::Min(20),
-            ]
-            .as_ref(),
-        )
+        .direction(Direction::Horizontal)
+        .constraints([Constraint::Percentage(60), Constraint::Min(40)].as_ref())
         .split(area);
-    // draw_text(f, chunks[2]);
+
+    draw_management_control_block(f, chunks[0]);
+    draw_management_content_info_block(f, chunks[1]);
 }
 
 /// Render ruscode setting tab UI
