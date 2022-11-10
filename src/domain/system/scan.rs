@@ -1,16 +1,13 @@
-use std::io::Error;
 use std::str::FromStr;
-use std::{str, task};
+use std::{fs, str};
 extern crate glob;
 use crate::common::system::SystemPaths;
 use crate::domain::entity::workspace::Workspace;
-use futures;
-use futures::stream::FuturesUnordered;
+use crate::domain::value_object::WorkspaceJson;
 use glob::glob;
-use std::path::PathBuf;
 use tokio::task::JoinError;
 
-pub fn scan_vscode_workspacestorage_from_system() -> Result<Vec<String>, JoinError> {
+fn scan_vscode_workspacestorage_from_system() -> Result<Vec<String>, JoinError> {
     let home = SystemPaths::home_dir();
     let tasks = glob(SystemPaths::vscode_workspace_storage_path().as_str())
         .expect("Fali to read glob pattern")
@@ -19,4 +16,54 @@ pub fn scan_vscode_workspacestorage_from_system() -> Result<Vec<String>, JoinErr
         .collect::<Vec<String>>();
 
     Ok(tasks)
+}
+
+fn extract_json_file(path: &str) -> WorkspaceJson {
+    let raw_json = fs::read_to_string(path).expect("Cannot read workspace from json");
+    serde_json::from_str(raw_json.as_str()).unwrap()
+}
+
+pub fn scan_workspaces_path() {
+    let current_workspaces_list = scan_vscode_workspacestorage_from_system();
+
+    use std::sync::mpsc;
+    use std::sync::mpsc::{Receiver, Sender};
+    use std::thread;
+
+    // Spawn a thread channel between app and new thread
+    let (tx, rx): (Sender<Workspace>, Receiver<Workspace>) = mpsc::channel();
+
+    let mut children = Vec::new();
+
+    for json_path in current_workspaces_list.unwrap() {
+        let thread_tx = tx.clone();
+
+        let child = thread::spawn(move || {
+            let data = extract_json_file(json_path.as_str());
+
+            thread_tx.send(data.into()).unwrap();
+        });
+
+        children.push(child);
+    }
+
+    // Show the order in which the messages were sent
+    println!("{:?}", children);
+
+    let mut result = Vec::new();
+
+    for _ in 0..children.len() {
+        // The `recv` method picks a message from the channel
+        // `recv` will block the current thread if there are no messages available
+        result.push(rx.recv());
+    }
+
+    // Wait for the threads to complete any remaining work
+    for child in children {
+        child.join().expect("oops! the child thread panicked");
+    }
+
+    for r in result {
+        println!("{:?}", r.unwrap().location_type);
+    }
 }

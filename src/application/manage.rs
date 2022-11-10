@@ -1,7 +1,5 @@
+use crate::application::app::App;
 use crate::presentation::ui;
-use crate::{
-    application::app::App, domain::system::scan::scan_vscode_workspacestorage_from_system,
-};
 use crossterm::{
     event::{self, DisableMouseCapture, EnableMouseCapture, Event, KeyCode},
     execute,
@@ -69,22 +67,16 @@ fn run_app<B: Backend>(terminal: &mut Terminal<B>, mut app: App) -> io::Result<(
                         }
                     }
                 }
-
-                // if last_tick.elapsed() >= tick_rate {
-                //     app.on_tick();
-                //     last_tick = Instant::now();
-                // }
             }
             super::app::ApplicationStatus::SplashScreenReveal => {
                 terminal.draw(|f| ui::draw(f, &mut app))?;
-                if last_tick.elapsed() >= Duration::from_secs(1) {
+                if last_tick.elapsed() >= Duration::from_secs(10) {
                     app.state_change(super::app::ApplicationStatus::Running)
                 }
             }
             super::app::ApplicationStatus::SyncVSCode => {
-                let current_workspaces = scan_vscode_workspacestorage_from_system();
+                app.scan_workspaces();
 
-                // println!("{:?}", current_workspaces);
                 if app.show_splash_screen {
                     app.state_change(super::app::ApplicationStatus::SplashScreenReveal)
                 } else {

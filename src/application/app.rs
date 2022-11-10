@@ -1,6 +1,8 @@
 use std::fmt;
 use tui::widgets::ListState;
 
+use crate::domain::system::scan::scan_workspaces_path;
+
 #[derive(Clone, Copy)]
 pub enum ApplicationStatus {
     SyncVSCode,
@@ -90,7 +92,7 @@ impl<'a> App<'a> {
             title,
             tabs: TabsState::new(vec!["Workspaces", "Settings"]),
             status: ApplicationStatus::SyncVSCode,
-            show_splash_screen: show_splash_screen
+            show_splash_screen: show_splash_screen,
         }
     }
 
@@ -120,6 +122,10 @@ impl<'a> App<'a> {
     }
 
     pub fn on_tick(&mut self) {}
+
+    pub fn scan_workspaces(&mut self) {
+        scan_workspaces_path();
+    }
 
     pub fn state_change(&mut self, next_state: ApplicationStatus) {
         match (self.status, next_state) {

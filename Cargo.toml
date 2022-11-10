@@ -23,6 +23,9 @@ chrono = { version = "0.4", features = ["serde"] }
 clap = { version = "4.0.22", features = ["derive"] }
 glob = "0.3.0"
 futures = "0.3.25"
+urlencoding = "2.1.2"
+serde = {version = "1.0.147", features = ["derive"] }
+serde_json = "1.0.87"
 
 
 [profile.release]
