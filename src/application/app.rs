@@ -1,10 +1,23 @@
+use std::fmt;
 use tui::widgets::ListState;
 
+#[derive(Clone, Copy)]
 pub enum ApplicationStatus {
     SyncVSCode,
     SplashScreenReveal,
     Running,
     Quit,
+}
+
+impl fmt::Display for ApplicationStatus {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match *self {
+            ApplicationStatus::SyncVSCode => write!(f, "SyncVSCode"),
+            ApplicationStatus::SplashScreenReveal => write!(f, "SplashScreenReveal"),
+            ApplicationStatus::Running => write!(f, "Running"),
+            ApplicationStatus::Quit => write!(f, "Quit"),
+        }
+    }
 }
 
 pub struct TabsState<'a> {
@@ -68,6 +81,7 @@ pub struct App<'a> {
     pub title: &'a str,
     pub tabs: TabsState<'a>,
     pub status: ApplicationStatus,
+    pub show_splash_screen: bool,
 }
 
 impl<'a> App<'a> {
@@ -75,11 +89,8 @@ impl<'a> App<'a> {
         App {
             title,
             tabs: TabsState::new(vec!["Workspaces", "Settings"]),
-            status: if show_splash_screen {
-                ApplicationStatus::SplashScreenReveal
-            } else {
-                ApplicationStatus::SyncVSCode
-            },
+            status: ApplicationStatus::SyncVSCode,
+            show_splash_screen: show_splash_screen
         }
     }
 
@@ -109,4 +120,28 @@ impl<'a> App<'a> {
     }
 
     pub fn on_tick(&mut self) {}
+
+    pub fn state_change(&mut self, next_state: ApplicationStatus) {
+        match (self.status, next_state) {
+            // Starts from SyncData
+            (ApplicationStatus::SyncVSCode, ApplicationStatus::Running) => {
+                self.status = ApplicationStatus::Running
+            }
+            (ApplicationStatus::SyncVSCode, ApplicationStatus::SplashScreenReveal) => {
+                self.status = ApplicationStatus::SplashScreenReveal
+            }
+
+            // Starts from Splash Screen
+            (ApplicationStatus::SplashScreenReveal, ApplicationStatus::Running) => {
+                self.status = ApplicationStatus::Running
+            }
+
+            // Starts from Running
+            (ApplicationStatus::Running, ApplicationStatus::Quit) => {
+                self.status = ApplicationStatus::Quit
+            }
+            // () => self.status = ApplicationStatus::Quit,
+            _ => panic!("Cannot transit from {} to {}", &self.status, &next_state),
+        };
+    }
 }

@@ -23,6 +23,18 @@ impl SystemPaths {
 
         String::from_str(home).unwrap()
     }
+
+    pub fn vscode_workspace_storage_path() -> String {
+        let home = SystemPaths::home_dir();
+        if cfg!(target_os = "windows") {
+            format!(
+                "{}/AppData/Roaming/Code/User/workspaceStorage/**/*.json",
+                home,
+            )
+        } else {
+            todo!()
+        }
+    }
 }
 
 #[cfg(test)]

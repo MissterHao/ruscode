@@ -45,7 +45,7 @@ pub async fn run(show_splash_screen: bool) -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
-async fn run_app<B: Backend>(terminal: &mut Terminal<B>, mut app: App<'_>) -> io::Result<()> {
+fn run_app<B: Backend>(terminal: &mut Terminal<B>, mut app: App) -> io::Result<()> {
     let mut last_tick = Instant::now();
     loop {
         match app.status {
@@ -78,14 +78,18 @@ async fn run_app<B: Backend>(terminal: &mut Terminal<B>, mut app: App<'_>) -> io
             super::app::ApplicationStatus::SplashScreenReveal => {
                 terminal.draw(|f| ui::draw(f, &mut app))?;
                 if last_tick.elapsed() >= Duration::from_secs(1) {
-                    app.status = super::app::ApplicationStatus::Running;
+                    app.state_change(super::app::ApplicationStatus::Running)
                 }
             }
             super::app::ApplicationStatus::SyncVSCode => {
-                let current_workspaces = scan_vscode_workspacestorage_from_system().await?;
+                let current_workspaces = scan_vscode_workspacestorage_from_system();
 
-                println!("{:?}", current_workspaces);
-                app.status = super::app::ApplicationStatus::Running;
+                // println!("{:?}", current_workspaces);
+                if app.show_splash_screen {
+                    app.state_change(super::app::ApplicationStatus::SplashScreenReveal)
+                } else {
+                    app.state_change(super::app::ApplicationStatus::Running)
+                }
             }
         }
     }

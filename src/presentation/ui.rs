@@ -29,9 +29,8 @@ pub fn draw<B: Backend>(f: &mut Frame<B>, app: &mut App) {
     match app.status {
         crate::application::app::ApplicationStatus::Quit => {}
         crate::application::app::ApplicationStatus::Running => draw_application(f, app),
-        crate::application::app::ApplicationStatus::SplashScreenReveal => {
-            draw_splash_screen(f, app)
-        }
+        crate::application::app::ApplicationStatus::SplashScreenReveal
+        | crate::application::app::ApplicationStatus::SyncVSCode => draw_splash_screen(f, app),
     }
 }
 

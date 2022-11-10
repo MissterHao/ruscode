@@ -1,35 +1,22 @@
 use std::io::Error;
-use std::str;
+use std::str::FromStr;
+use std::{str, task};
 extern crate glob;
 use crate::common::system::SystemPaths;
+use crate::domain::entity::workspace::Workspace;
 use futures;
 use futures::stream::FuturesUnordered;
 use glob::glob;
 use std::path::PathBuf;
 use tokio::task::JoinError;
 
-pub async fn scan_vscode_workspacestorage_from_system(
-) -> Result<Vec<Result<PathBuf, JoinError>>, Error> {
+pub fn scan_vscode_workspacestorage_from_system() -> Result<Vec<String>, JoinError> {
     let home = SystemPaths::home_dir();
-    let tasks = glob(
-        format!(
-            "{}/AppData/Roaming/Code/User/workspaceStorage/**/*.json",
-            home,
-        )
-        .as_str(),
-    )
-    .expect("Fali to read glob pattern")
-    .into_iter()
-    .map(|entry| {
-        tokio::spawn(async move {
-            // sleep(Duration::from_secs(1)).await; // simulate some work
-            entry.unwrap()
-        })
-    })
-    .collect::<FuturesUnordered<_>>();
+    let tasks = glob(SystemPaths::vscode_workspace_storage_path().as_str())
+        .expect("Fali to read glob pattern")
+        .into_iter()
+        .map(|entry| String::from_str(entry.unwrap().to_str().unwrap()).unwrap())
+        .collect::<Vec<String>>();
 
-    let result = futures::future::join_all(tasks).await;
-    println!("{:?}", result);   
-
-    Ok(result)
+    Ok(tasks)
 }
