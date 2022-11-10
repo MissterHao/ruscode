@@ -1,9 +1,10 @@
 use tui::widgets::ListState;
 
 pub enum ApplicationStatus {
-    Quit,
+    SyncVSCode,
     SplashScreenReveal,
     Running,
+    Quit,
 }
 
 pub struct TabsState<'a> {
@@ -15,16 +16,9 @@ impl<'a> TabsState<'a> {
     pub fn new(titles: Vec<&'a str>) -> TabsState {
         TabsState { titles, index: 0 }
     }
+
     pub fn next(&mut self) {
         self.index = (self.index + 1) % self.titles.len();
-    }
-
-    pub fn previous(&mut self) {
-        if self.index > 0 {
-            self.index -= 1;
-        } else {
-            self.index = self.titles.len() - 1;
-        }
     }
 }
 
@@ -84,7 +78,7 @@ impl<'a> App<'a> {
             status: if show_splash_screen {
                 ApplicationStatus::SplashScreenReveal
             } else {
-                ApplicationStatus::Running
+                ApplicationStatus::SyncVSCode
             },
         }
     }

@@ -14,7 +14,7 @@ impl SystemPaths {
         } else {
             Command::new("sh")
                 .arg("-c")
-                .arg("pwd")
+                .arg("getent passwd \"$USER\" | cut -d: -f6 ")
                 .output()
                 .expect("failed to execute process")
         };

@@ -1,5 +1,7 @@
-use crate::application::app::App;
 use crate::presentation::ui;
+use crate::{
+    application::app::App, domain::system::scan::scan_vscode_workspacestorage_from_system,
+};
 use crossterm::{
     event::{self, DisableMouseCapture, EnableMouseCapture, Event, KeyCode},
     execute,
@@ -43,7 +45,7 @@ pub async fn run(show_splash_screen: bool) -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
-fn run_app<B: Backend>(terminal: &mut Terminal<B>, mut app: App) -> io::Result<()> {
+async fn run_app<B: Backend>(terminal: &mut Terminal<B>, mut app: App<'_>) -> io::Result<()> {
     let mut last_tick = Instant::now();
     loop {
         match app.status {
@@ -78,6 +80,12 @@ fn run_app<B: Backend>(terminal: &mut Terminal<B>, mut app: App) -> io::Result<(
                 if last_tick.elapsed() >= Duration::from_secs(1) {
                     app.status = super::app::ApplicationStatus::Running;
                 }
+            }
+            super::app::ApplicationStatus::SyncVSCode => {
+                let current_workspaces = scan_vscode_workspacestorage_from_system().await?;
+
+                println!("{:?}", current_workspaces);
+                app.status = super::app::ApplicationStatus::Running;
             }
         }
     }
