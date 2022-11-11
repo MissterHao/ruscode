@@ -1,11 +1,16 @@
 use std::fmt;
 use tui::widgets::ListState;
 
-use crate::domain::system::scan::scan_workspaces_path;
+use crate::{
+    domain::{entity::workspace::Workspace, system::scan::scan_workspaces_path},
+    infrastructure::repository::workspace_repository::WorkspaceRepository,
+};
+
+use super::error::ApplicationError;
 
 #[derive(Clone, Copy)]
 pub enum ApplicationStatus {
-    SyncVSCode,
+    PrepareEnvironment,
     SplashScreenReveal,
     Running,
     Quit,
@@ -14,7 +19,7 @@ pub enum ApplicationStatus {
 impl fmt::Display for ApplicationStatus {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match *self {
-            ApplicationStatus::SyncVSCode => write!(f, "SyncVSCode"),
+            ApplicationStatus::PrepareEnvironment => write!(f, "SyncVSCode"),
             ApplicationStatus::SplashScreenReveal => write!(f, "SplashScreenReveal"),
             ApplicationStatus::Running => write!(f, "Running"),
             ApplicationStatus::Quit => write!(f, "Quit"),
@@ -84,6 +89,7 @@ pub struct App<'a> {
     pub tabs: TabsState<'a>,
     pub status: ApplicationStatus,
     pub show_splash_screen: bool,
+    pub workspaces: Vec<Workspace>,
 }
 
 impl<'a> App<'a> {
@@ -91,8 +97,9 @@ impl<'a> App<'a> {
         App {
             title,
             tabs: TabsState::new(vec!["Workspaces", "Settings"]),
-            status: ApplicationStatus::SyncVSCode,
+            status: ApplicationStatus::PrepareEnvironment,
             show_splash_screen: show_splash_screen,
+            workspaces: vec![],
         }
     }
 
@@ -123,17 +130,37 @@ impl<'a> App<'a> {
 
     pub fn on_tick(&mut self) {}
 
-    pub fn scan_workspaces(&mut self) {
-        scan_workspaces_path();
+    pub fn scan_workspaces(&mut self) -> Result<Vec<Workspace>, ApplicationError> {
+        Ok(scan_workspaces_path())
+    }
+
+    fn create_database(&self) -> Result<(), ApplicationError> {
+        
+        Ok(())
+    }
+
+    pub fn init_environment(&mut self) -> Result<(), ApplicationError> {
+        // Make sure database is always exists
+        self.create_database().expect("Database cannot be created.");
+
+        // Scan and get all workspace json file path
+        let workspaces = self.scan_workspaces().expect("Scanning workspaces failed.");
+
+        // Sync current new workspaces data to database
+        WorkspaceRepository::sync_to_database(&workspaces)
+            .expect("Syncing workspaces data failed.");
+
+        // Init environment
+        Ok(())
     }
 
     pub fn state_change(&mut self, next_state: ApplicationStatus) {
         match (self.status, next_state) {
             // Starts from SyncData
-            (ApplicationStatus::SyncVSCode, ApplicationStatus::Running) => {
+            (ApplicationStatus::PrepareEnvironment, ApplicationStatus::Running) => {
                 self.status = ApplicationStatus::Running
             }
-            (ApplicationStatus::SyncVSCode, ApplicationStatus::SplashScreenReveal) => {
+            (ApplicationStatus::PrepareEnvironment, ApplicationStatus::SplashScreenReveal) => {
                 self.status = ApplicationStatus::SplashScreenReveal
             }
 

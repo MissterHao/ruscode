@@ -20,6 +20,6 @@ fn main() -> Result<(), Box<dyn Error>> {
     // Read arguments from cli by clap
     let args = CliArgs::parse();
 
-    run(!args.disable_splash_screen);
+    run(!args.disable_splash_screen)?;
     Ok(())
 }

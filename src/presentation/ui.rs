@@ -30,7 +30,9 @@ pub fn draw<B: Backend>(f: &mut Frame<B>, app: &mut App) {
         crate::application::app::ApplicationStatus::Quit => {}
         crate::application::app::ApplicationStatus::Running => draw_application(f, app),
         crate::application::app::ApplicationStatus::SplashScreenReveal
-        | crate::application::app::ApplicationStatus::SyncVSCode => draw_splash_screen(f, app),
+        | crate::application::app::ApplicationStatus::PrepareEnvironment => {
+            draw_splash_screen(f, app)
+        }
     }
 }
 

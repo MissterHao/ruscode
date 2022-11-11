@@ -74,15 +74,16 @@ fn run_app<B: Backend>(terminal: &mut Terminal<B>, mut app: App) -> io::Result<(
                     app.state_change(super::app::ApplicationStatus::Running)
                 }
             }
-            super::app::ApplicationStatus::SyncVSCode => {
-                app.scan_workspaces();
-
-                if app.show_splash_screen {
-                    app.state_change(super::app::ApplicationStatus::SplashScreenReveal)
-                } else {
-                    app.state_change(super::app::ApplicationStatus::Running)
+            super::app::ApplicationStatus::PrepareEnvironment => match app.init_environment() {
+                Ok(()) => {
+                    if app.show_splash_screen {
+                        app.state_change(super::app::ApplicationStatus::SplashScreenReveal)
+                    } else {
+                        app.state_change(super::app::ApplicationStatus::Running)
+                    }
                 }
-            }
+                Err(_) => panic!("Fail to prepare environment!"),
+            },
         }
     }
 }

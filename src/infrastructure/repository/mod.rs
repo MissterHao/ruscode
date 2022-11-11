@@ -1,1 +1,1 @@
-mod workspace_repository;
+pub mod workspace_repository;

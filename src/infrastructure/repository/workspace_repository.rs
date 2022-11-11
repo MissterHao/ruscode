@@ -1,10 +1,8 @@
-use crate::domain::repository::base::Repository;
+use crate::application::error::ApplicationError;
 use crate::domain::entity::workspace::Workspace;
+use crate::domain::repository::base::Repository;
 
-
-struct WorkspaceRepository {
-    
-}
+pub struct WorkspaceRepository {}
 
 impl Repository for WorkspaceRepository {
     type EntityType = Workspace;
@@ -16,5 +14,10 @@ impl Repository for WorkspaceRepository {
     fn get_all_items(&self, id: &str) -> Vec<Self::EntityType> {
         todo!()
     }
+}
 
+impl WorkspaceRepository {
+    pub fn sync_to_database(curr_workspaces: &Vec<Workspace>) -> Result<(), ApplicationError> {
+        Ok(())
+    }
 }

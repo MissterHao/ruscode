@@ -35,6 +35,17 @@ impl SystemPaths {
             todo!()
         }
     }
+
+    #[cfg(target_os = "windows")]
+    pub fn application_data_folder() -> String {
+        let home = SystemPaths::home_dir();
+        format!("{}/AppData/Local/ruscode", home)
+    }
+
+    #[cfg(not(target_os = "windows"))]
+    pub fn application_data_folder() -> String {
+        String::new("/var/lib/ruscode")
+    }
 }
 
 #[cfg(test)]
