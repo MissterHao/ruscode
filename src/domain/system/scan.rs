@@ -1,3 +1,4 @@
+use std::io::Error;
 use std::str::FromStr;
 use std::{fs, str};
 extern crate glob;
@@ -5,9 +6,8 @@ use crate::common::system::SystemPaths;
 use crate::domain::entity::workspace::Workspace;
 use crate::domain::value_object::WorkspaceJson;
 use glob::glob;
-use tokio::task::JoinError;
 
-fn scan_vscode_workspacestorage_from_system() -> Result<Vec<String>, JoinError> {
+fn scan_vscode_workspacestorage_from_system() -> Result<Vec<String>, Error> {
     let home = SystemPaths::home_dir();
     let tasks = glob(SystemPaths::vscode_workspace_storage_path().as_str())
         .expect("Fali to read glob pattern")

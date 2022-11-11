@@ -15,7 +15,7 @@ use tui::{
     Terminal,
 };
 
-pub async fn run(show_splash_screen: bool) -> Result<(), Box<dyn Error>> {
+pub fn run(show_splash_screen: bool) -> Result<(), Box<dyn Error>> {
     // setup terminal
     enable_raw_mode()?;
     let mut stdout = io::stdout();
