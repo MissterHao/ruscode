@@ -1,12 +1,12 @@
 #[derive(Debug)]
-pub(crate) struct Tag {
-    name: String
+pub struct Tag {
+    name: String,
 }
 
 impl Tag {
     pub fn new() -> Self {
         Tag {
-            name: String::from("")
+            name: String::from(""),
         }
     }
 }

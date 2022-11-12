@@ -3,7 +3,7 @@ use tui::widgets::ListState;
 
 use crate::{
     domain::{entity::workspace::Workspace, system::scan::scan_workspaces_path},
-    infrastructure::repository::workspace_repository::WorkspaceRepository,
+    infrastructure::repository::{workspace_repository::WorkspaceRepository, create_database, error::DatabaseError},
 };
 
 use super::error::ApplicationError;
@@ -134,8 +134,8 @@ impl<'a> App<'a> {
         Ok(scan_workspaces_path())
     }
 
-    fn create_database(&self) -> Result<(), ApplicationError> {
-        
+    fn create_database(&self) -> Result<(), DatabaseError> {
+        create_database()?;
         Ok(())
     }
 
