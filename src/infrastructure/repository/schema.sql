@@ -1,0 +1,21 @@
+CREATE TABLE workspaces (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    title TEXT NOT NULL path TEXT NOT NULL type TEXT NOT NULL
+);
+
+CREATE TABLE tags (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    name TEXT NOT NULL,
+);
+
+CREATE TABLE tags_workspaces (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    workspaces_id INTEGER,
+    tags_id INTEGER,
+    FOREIGN KEY(workspaces_id) REFERENCES workspaces(id),
+    FOREIGN KEY(tags_id) REFERENCES tags(id)
+);
+
+CREATE INDEX idx_tags ON tags_workspaces(tags_id);

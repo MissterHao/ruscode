@@ -70,7 +70,7 @@ fn run_app<B: Backend>(terminal: &mut Terminal<B>, mut app: App) -> io::Result<(
             }
             super::app::ApplicationStatus::SplashScreenReveal => {
                 terminal.draw(|f| ui::draw(f, &mut app))?;
-                if last_tick.elapsed() >= Duration::from_secs(1) {
+                if last_tick.elapsed() >= Duration::from_secs(10) {
                     app.state_change(super::app::ApplicationStatus::Running)
                 }
             }

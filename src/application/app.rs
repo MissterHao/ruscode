@@ -2,8 +2,14 @@ use std::fmt;
 use tui::widgets::ListState;
 
 use crate::{
-    domain::{entity::workspace::Workspace, system::scan::scan_workspaces_path},
-    infrastructure::repository::{workspace_repository::WorkspaceRepository, create_database, error::DatabaseError},
+    common::system::SystemPaths,
+    domain::{
+        entity::workspace::Workspace,
+        system::{init::init_application_folders, scan::scan_workspaces_path},
+    },
+    infrastructure::repository::{
+        create_database, error::DatabaseError, workspace_repository::WorkspaceRepository,
+    },
 };
 
 use super::error::ApplicationError;
@@ -134,14 +140,18 @@ impl<'a> App<'a> {
         Ok(scan_workspaces_path())
     }
 
-    fn create_database(&self) -> Result<(), DatabaseError> {
-        create_database()?;
+    fn create_database(&self, path: &str) -> Result<(), DatabaseError> {
+        create_database(path)?;
         Ok(())
     }
 
     pub fn init_environment(&mut self) -> Result<(), ApplicationError> {
+        // Default app folder create
+        init_application_folders().expect("Failed to create application folders.");
+
         // Make sure database is always exists
-        self.create_database().expect("Database cannot be created.");
+        self.create_database(SystemPaths::database().as_str())
+            .expect("Database cannot be created.");
 
         // Scan and get all workspace json file path
         let workspaces = self.scan_workspaces().expect("Scanning workspaces failed.");
@@ -149,6 +159,8 @@ impl<'a> App<'a> {
         // Sync current new workspaces data to database
         WorkspaceRepository::sync_to_database(&workspaces)
             .expect("Syncing workspaces data failed.");
+
+        WorkspaceRepository::sync_to_database(&workspaces);
 
         // Init environment
         Ok(())
