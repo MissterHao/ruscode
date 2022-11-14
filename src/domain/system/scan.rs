@@ -44,9 +44,7 @@ pub fn scan_workspaces_path() -> Vec<Workspace> {
                     s.send(Some(Workspace::from(val)))
                         .expect("Fail to send Workspace struct to main receive channel.");
                 }
-                None => {
-                    // s.send(None);
-                }
+                None => {}
             }
         }
     });

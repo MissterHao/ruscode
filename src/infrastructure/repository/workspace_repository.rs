@@ -6,6 +6,7 @@ use crate::domain::repository::base::Repository;
 use super::get_db_connection;
 
 use std::collections::HashSet;
+use std::thread;
 
 pub struct WorkspaceRepository {}
 
@@ -30,7 +31,7 @@ impl Repository for WorkspaceRepository {
         vec![]
     }
 
-    fn insert_or_create(&self, entity: Self::EntityType) -> Self::EntityType {
+    fn insert_or_create(&self, entity: &Self::EntityType) -> Self::EntityType {
         let db_connection = get_db_connection(SystemPaths::database().as_str())
             .expect("Cannot get database connection.");
 
@@ -47,6 +48,32 @@ impl Repository for WorkspaceRepository {
         }
 
         Self::EntityType::new()
+    }
+
+    fn delete(&self, entity: &Self::EntityType) -> bool {
+        let db_connection = get_db_connection(SystemPaths::database().as_str())
+            .expect("Cannot get database connection.");
+
+        let mut stmt = db_connection
+            .prepare(r#"DELETE FROM workspaces where"#)
+            .expect("Failed to select all workspaces.");
+
+        true
+    }
+
+    fn delete_entities(&self, entities: &Vec<Self::EntityType>) -> bool {
+        let db_connection = get_db_connection(SystemPaths::database().as_str())
+            .expect("Cannot get database connection.");
+
+        let mut stmt = db_connection
+            .prepare(r#"DELETE FROM workspaces where path = ?1"#)
+            .expect("Failed to select all workspaces.");
+
+        for entity in entities {
+            stmt.execute([entity.path.clone()]);
+        }
+
+        true
     }
 }
 
@@ -71,10 +98,25 @@ impl WorkspaceRepository {
         let in_folder: HashSet<Workspace> = HashSet::from_iter(curr_workspaces.iter().cloned());
 
         // In db but not in folder anymore
-        // println!("{:?}", in_db.difference(&in_folder));
-
+        let insert_list = in_folder
+            .difference(&in_db)
+            .map(|x| x.clone())
+            .collect::<Vec<Workspace>>();
         // In folder but not in db anymore
-        // println!("{:?}", in_folder.difference(&in_db));
+        let delete_list = in_db
+            .difference(&in_folder)
+            .map(|x| x.clone())
+            .collect::<Vec<Workspace>>();
+
+        // Create Workspace repository
+        let workspace_repo = WorkspaceRepository {};
+        for w in insert_list {
+            workspace_repo.insert_or_create(&w);
+        }
+
+        // Delete Workspace repository
+        let workspace_repo = WorkspaceRepository {};
+        workspace_repo.delete_entities(&delete_list);
 
         Ok(())
     }
