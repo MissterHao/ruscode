@@ -77,6 +77,7 @@ fn run_app<B: Backend>(terminal: &mut Terminal<B>, mut app: App) -> io::Result<(
             super::app::ApplicationStatus::PrepareEnvironment => match app.init_environment() {
                 Ok(()) => {
                     if app.show_splash_screen {
+                        last_tick = Instant::now();
                         app.state_change(super::app::ApplicationStatus::SplashScreenReveal)
                     } else {
                         app.state_change(super::app::ApplicationStatus::Running)
