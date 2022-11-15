@@ -37,3 +37,7 @@ MIT
 
 ## Contributors
 
+
+
+## 🌟 Star History
+[![Star History Chart](https://api.star-history.com/svg?repos=MissterHao/ruscode&type=Date)](https://star-history.com/#MissterHao/ruscode&Date)

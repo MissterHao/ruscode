@@ -98,7 +98,8 @@ where
         crate::application::app::ApplicationControlMode::SearchMode => SEARCH_MODE_HELP_TEXT,
         crate::application::app::ApplicationControlMode::DetailMode => DETAIL_MODE_HELP_TEXT,
     })
-    .block(Block::default().borders(Borders::ALL));
+    .block(Block::default().borders(Borders::ALL))
+    .style(RuscodeStyle::success());
     f.render_widget(help_text_paragraph, chunks[1]);
 }
 
@@ -128,7 +129,7 @@ where
                 ];
                 ListItem::new(lines).style(match app.control_mode {
                     crate::application::app::ApplicationControlMode::SearchMode => {
-                        RuscodeStyle::focus_mode()
+                        RuscodeStyle::default_font()
                     }
                     crate::application::app::ApplicationControlMode::DetailMode => {
                         RuscodeStyle::unfocus_mode()
