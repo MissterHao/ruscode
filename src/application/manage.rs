@@ -8,6 +8,7 @@ use crossterm::{
 use std::{
     error::Error,
     io,
+    sync::{Arc, Mutex},
     time::{Duration, Instant},
 };
 use tui::{
@@ -78,7 +79,7 @@ fn run_app<B: Backend>(terminal: &mut Terminal<B>, mut app: App) -> io::Result<(
                 Ok(()) => {
                     if app.show_splash_screen {
                         last_tick = Instant::now();
-                        app.state_change(super::app::ApplicationStatus::SplashScreenReveal)
+                        app.state_change(super::app::ApplicationStatus::SplashScreenReveal);
                     } else {
                         app.state_change(super::app::ApplicationStatus::Running)
                     }

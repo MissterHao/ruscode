@@ -1,3 +1,8 @@
+use std::{
+    cell::RefCell,
+    sync::{Arc, Mutex},
+};
+
 use crate::application::app::App;
 use tui::{
     backend::Backend,
@@ -110,7 +115,7 @@ where
         .constraints([Constraint::Percentage(60), Constraint::Min(40)].as_ref())
         .split(area);
 
-    draw_management_control_block(f, chunks[0]);
+    draw_management_control_block(f, app, chunks[0]);
     draw_management_content_info_block(f, chunks[1]);
 }
 

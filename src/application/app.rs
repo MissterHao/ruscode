@@ -1,5 +1,4 @@
 use std::fmt;
-use tui::widgets::ListState;
 
 use crate::{
     common::system::SystemPaths,
@@ -12,7 +11,7 @@ use crate::{
     },
 };
 
-use super::error::ApplicationError;
+use super::{error::ApplicationError, stateful_list::StatefulList, tab_state::TabsState};
 
 #[derive(Clone, Copy)]
 pub enum ApplicationStatus {
@@ -33,69 +32,12 @@ impl fmt::Display for ApplicationStatus {
     }
 }
 
-pub struct TabsState<'a> {
-    pub titles: Vec<&'a str>,
-    pub index: usize,
-}
-
-impl<'a> TabsState<'a> {
-    pub fn new(titles: Vec<&'a str>) -> TabsState {
-        TabsState { titles, index: 0 }
-    }
-
-    pub fn next(&mut self) {
-        self.index = (self.index + 1) % self.titles.len();
-    }
-}
-
-pub struct StatefulList<T> {
-    pub state: ListState,
-    pub items: Vec<T>,
-}
-
-impl<T> StatefulList<T> {
-    pub fn with_items(items: Vec<T>) -> StatefulList<T> {
-        StatefulList {
-            state: ListState::default(),
-            items,
-        }
-    }
-
-    pub fn next(&mut self) {
-        let i = match self.state.selected() {
-            Some(i) => {
-                if i >= self.items.len() - 1 {
-                    0
-                } else {
-                    i + 1
-                }
-            }
-            None => 0,
-        };
-        self.state.select(Some(i));
-    }
-
-    pub fn previous(&mut self) {
-        let i = match self.state.selected() {
-            Some(i) => {
-                if i == 0 {
-                    self.items.len() - 1
-                } else {
-                    i - 1
-                }
-            }
-            None => 0,
-        };
-        self.state.select(Some(i));
-    }
-}
-
 pub struct App<'a> {
     pub title: &'a str,
     pub tabs: TabsState<'a>,
     pub status: ApplicationStatus,
     pub show_splash_screen: bool,
-    pub workspaces: Vec<Workspace>,
+    pub workspaces: StatefulList<Workspace>,
 }
 
 impl<'a> App<'a> {
@@ -105,7 +47,7 @@ impl<'a> App<'a> {
             tabs: TabsState::new(vec!["Workspaces", "Settings"]),
             status: ApplicationStatus::PrepareEnvironment,
             show_splash_screen: show_splash_screen,
-            workspaces: vec![],
+            workspaces: StatefulList::with_items(vec![]),
         }
     }
 
@@ -118,11 +60,11 @@ impl<'a> App<'a> {
     }
 
     pub fn on_up(&mut self) {
-        // self.tasks.previous();
+        self.workspaces.previous();
     }
 
     pub fn on_down(&mut self) {
-        // self.tasks.next();
+        self.workspaces.next();
     }
 
     pub fn enter_in_workspace(&mut self) {}
@@ -145,6 +87,7 @@ impl<'a> App<'a> {
         Ok(())
     }
 
+    /// Init environment
     pub fn init_environment(&mut self) -> Result<(), ApplicationError> {
         // Default app folder create
         init_application_folders().expect("Failed to create application folders.");
@@ -157,12 +100,10 @@ impl<'a> App<'a> {
         let workspaces = self.scan_workspaces().expect("Scanning workspaces failed.");
 
         // Sync current new workspaces data to database
-        WorkspaceRepository::sync_to_database(&workspaces)
+        let ret = WorkspaceRepository::sync_to_database(&workspaces)
             .expect("Syncing workspaces data failed.");
 
-        WorkspaceRepository::sync_to_database(&workspaces);
-
-        // Init environment
+        self.workspaces.items = ret;
         Ok(())
     }
 

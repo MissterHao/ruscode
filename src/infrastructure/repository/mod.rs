@@ -10,9 +10,7 @@ const SQL: &str = r#"
 CREATE TABLE workspaces (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    title TEXT NOT NULL,
-    path TEXT NOT NULL,
-    type TEXT NOT NULL
+    path TEXT NOT NULL
 );
 
 CREATE TABLE tags (

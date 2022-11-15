@@ -1,3 +1,5 @@
+use rusqlite::params;
+
 use crate::application::error::ApplicationError;
 use crate::common::system::SystemPaths;
 use crate::domain::entity::workspace::Workspace;
@@ -5,6 +7,7 @@ use crate::domain::repository::base::Repository;
 
 use super::get_db_connection;
 
+use core::time;
 use std::collections::HashSet;
 use std::thread;
 
@@ -36,18 +39,13 @@ impl Repository for WorkspaceRepository {
             .expect("Cannot get database connection.");
 
         let mut stmt = db_connection
-            .prepare(r#"SELECT * FROM workspaces"#)
+            .prepare(r#"INSERT INTO workspaces (path) VALUES (?1)"#)
             .expect("Failed t   o select all workspaces.");
 
-        let workspace_iter = stmt
-            .query_map([], |row| Ok(Workspace::from_dbrow(row)))
-            .expect("Failed to transform database row to entity.");
+        stmt.execute(params![entity.path])
+            .expect("Cannot insert to db");
 
-        for w in workspace_iter {
-            println!("{:?}", w.unwrap());
-        }
-
-        Self::EntityType::new()
+        Self::EntityType::from(entity.path.as_str())
     }
 
     fn delete(&self, entity: &Self::EntityType) -> bool {
@@ -78,7 +76,9 @@ impl Repository for WorkspaceRepository {
 }
 
 impl WorkspaceRepository {
-    pub fn sync_to_database(curr_workspaces: &Vec<Workspace>) -> Result<(), ApplicationError> {
+    pub fn sync_to_database(
+        curr_workspaces: &Vec<Workspace>,
+    ) -> Result<Vec<Workspace>, ApplicationError> {
         let db_connection = get_db_connection(SystemPaths::database().as_str())
             .expect("Cannot get database connection.");
 
@@ -118,6 +118,10 @@ impl WorkspaceRepository {
         let workspace_repo = WorkspaceRepository {};
         workspace_repo.delete_entities(&delete_list);
 
-        Ok(())
+        Ok(stmt
+            .query_map([], |row| Ok(Workspace::from_dbrow(row)))
+            .unwrap()
+            .map(|x| x.unwrap())
+            .collect::<Vec<Workspace>>())
     }
 }
