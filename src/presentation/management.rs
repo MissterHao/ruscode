@@ -25,7 +25,10 @@ use tui::{
 
 use crate::application::app::App;
 
-use super::text::{DETAIL_MODE_HELP_TEXT, SEARCH_MODE_HELP_TEXT};
+use super::{
+    style::RuscodeStyle,
+    text::{DETAIL_MODE_HELP_TEXT, SEARCH_MODE_HELP_TEXT},
+};
 
 /// Display detail information of selected vscode workspace
 ///  
@@ -39,10 +42,12 @@ where
 
     let p = Paragraph::new("Workspace detail 🔍")
         .style(match app.control_mode {
-            crate::application::app::ApplicationControlMode::SearchMode => Style::default(),
-            crate::application::app::ApplicationControlMode::DetailMode => Style::default()
-                .fg(Color::Green)
-                .add_modifier(Modifier::DIM),
+            crate::application::app::ApplicationControlMode::SearchMode => {
+                RuscodeStyle::unfocus_mode()
+            }
+            crate::application::app::ApplicationControlMode::DetailMode => {
+                RuscodeStyle::focus_mode()
+            }
         })
         .alignment(Alignment::Center)
         .block(
@@ -78,11 +83,22 @@ where
         .split(area);
 
     let p = Paragraph::new(app.search_text.clone())
+        .style(match app.control_mode {
+            crate::application::app::ApplicationControlMode::SearchMode => {
+                RuscodeStyle::focus_mode()
+            }
+            crate::application::app::ApplicationControlMode::DetailMode => {
+                RuscodeStyle::unfocus_mode()
+            }
+        })
         .block(Block::default().borders(Borders::ALL).title(" Search "));
     f.render_widget(p, chunks[0]);
 
-    let help_text_paragraph =
-        Paragraph::new(DETAIL_MODE_HELP_TEXT).block(Block::default().borders(Borders::ALL));
+    let help_text_paragraph = Paragraph::new(match app.control_mode {
+        crate::application::app::ApplicationControlMode::SearchMode => SEARCH_MODE_HELP_TEXT,
+        crate::application::app::ApplicationControlMode::DetailMode => DETAIL_MODE_HELP_TEXT,
+    })
+    .block(Block::default().borders(Borders::ALL));
     f.render_widget(help_text_paragraph, chunks[1]);
 }
 
@@ -110,10 +126,21 @@ where
                         Style::default().add_modifier(Modifier::DIM),
                     )),
                 ];
-                ListItem::new(lines).style(Style::default().fg(Color::White))
+                ListItem::new(lines).style(match app.control_mode {
+                    crate::application::app::ApplicationControlMode::SearchMode => {
+                        RuscodeStyle::focus_mode()
+                    }
+                    crate::application::app::ApplicationControlMode::DetailMode => {
+                        RuscodeStyle::unfocus_mode()
+                    }
+                })
             })
             .collect::<Vec<ListItem>>(),
     )
+    .style(match app.control_mode {
+        crate::application::app::ApplicationControlMode::SearchMode => RuscodeStyle::focus_mode(),
+        crate::application::app::ApplicationControlMode::DetailMode => RuscodeStyle::unfocus_mode(),
+    })
     .block(
         Block::default()
             .borders(Borders::ALL)
