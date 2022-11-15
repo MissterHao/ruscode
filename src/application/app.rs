@@ -38,6 +38,7 @@ pub struct App<'a> {
     pub status: ApplicationStatus,
     pub show_splash_screen: bool,
     pub workspaces: StatefulList<Workspace>,
+    pub search_text: String,
 }
 
 impl<'a> App<'a> {
@@ -48,6 +49,7 @@ impl<'a> App<'a> {
             status: ApplicationStatus::PrepareEnvironment,
             show_splash_screen: show_splash_screen,
             workspaces: StatefulList::with_items(vec![]),
+            search_text: String::new(),
         }
     }
 
