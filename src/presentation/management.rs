@@ -85,7 +85,7 @@ where
     let p = Paragraph::new(app.search_text.clone())
         .style(match app.control_mode {
             crate::application::app::ApplicationControlMode::SearchMode => {
-                RuscodeStyle::focus_mode()
+                RuscodeStyle::default_focus_mode()
             }
             crate::application::app::ApplicationControlMode::DetailMode => {
                 RuscodeStyle::unfocus_mode()
@@ -139,7 +139,9 @@ where
             .collect::<Vec<ListItem>>(),
     )
     .style(match app.control_mode {
-        crate::application::app::ApplicationControlMode::SearchMode => RuscodeStyle::focus_mode(),
+        crate::application::app::ApplicationControlMode::SearchMode => {
+            RuscodeStyle::default_focus_mode()
+        }
         crate::application::app::ApplicationControlMode::DetailMode => RuscodeStyle::unfocus_mode(),
     })
     .block(
