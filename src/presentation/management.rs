@@ -14,12 +14,6 @@
 //! ## Content Information Block:
 //! Display deatil information of selected vscode workspace.
 
-use std::{
-    borrow::BorrowMut,
-    cell::RefCell,
-    sync::{Arc, Mutex},
-};
-
 use tui::{
     backend::Backend,
     layout::{Alignment, Constraint, Direction, Layout, Rect},
@@ -31,6 +25,8 @@ use tui::{
 
 use crate::application::app::App;
 
+use super::text::{DETAIL_MODE_HELP_TEXT, SEARCH_MODE_HELP_TEXT};
+
 /// Display detail information of selected vscode workspace
 ///  
 pub fn draw_management_content_info_block<B>(f: &mut Frame<B>, area: Rect)
@@ -41,7 +37,7 @@ where
         .constraints([Constraint::Min(30)].as_ref())
         .split(area);
 
-    let p = Paragraph::new("Content info")
+    let p = Paragraph::new("Workspace detail 🔍")
         .alignment(Alignment::Center)
         .block(
             Block::default()
@@ -61,12 +57,12 @@ where
         .constraints([Constraint::Percentage(30), Constraint::Percentage(70)].as_ref())
         .split(area);
 
-    draw_management_control_upper_bar(f, chunks[0]);
+    draw_management_control_upper_bar(f, app, chunks[0]);
     draw_management_control_workspace_list(f, app, chunks[1]);
 }
 
 /// Render vscode workspace management tab UI
-fn draw_management_control_upper_bar<B>(f: &mut Frame<B>, area: Rect)
+fn draw_management_control_upper_bar<B>(f: &mut Frame<B>, app: &mut App, area: Rect)
 where
     B: Backend,
 {
@@ -75,10 +71,13 @@ where
         .constraints([Constraint::Percentage(50), Constraint::Percentage(50)].as_ref())
         .split(area);
 
-    let p = Paragraph::new("").block(Block::default().borders(Borders::ALL).title(" Search "));
-    let p2 = Paragraph::new("Logo").block(Block::default().borders(Borders::ALL));
+    let p = Paragraph::new(app.search_text.clone())
+        .block(Block::default().borders(Borders::ALL).title(" Search "));
     f.render_widget(p, chunks[0]);
-    f.render_widget(p2, chunks[1]);
+
+    let help_text_paragraph =
+        Paragraph::new(DETAIL_MODE_HELP_TEXT).block(Block::default().borders(Borders::ALL));
+    f.render_widget(help_text_paragraph, chunks[1]);
 }
 
 /// Render vscode workspace management tab UI
@@ -95,24 +94,30 @@ where
             .items
             .iter()
             .map(|x| {
-                let mut lines = vec![
-                    Spans::from(x.decode_path.clone()),
+                let lines = vec![
+                    Spans::from(Span::styled(
+                        x.title.clone(),
+                        Style::default().add_modifier(Modifier::BOLD),
+                    )),
                     Spans::from(Span::styled(
                         x.decode_path.clone(),
-                        Style::default().add_modifier(Modifier::ITALIC),
+                        Style::default().add_modifier(Modifier::DIM),
                     )),
                 ];
-                ListItem::new(lines).style(Style::default().fg(Color::Black))
+                ListItem::new(lines).style(Style::default().fg(Color::White))
             })
             .collect::<Vec<ListItem>>(),
     )
-    .block(Block::default().borders(Borders::ALL).title("List"))
-    // .style(Style::default().bg(Color::Green))
+    .block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title(" Workspace List 📜 "),
+    )
     .highlight_style(
         Style::default()
             .bg(Color::White)
             .add_modifier(Modifier::BOLD),
     )
-    .highlight_symbol(">> ");
+    .highlight_symbol("📌 ");
     f.render_stateful_widget(items, chunks[0], &mut app.workspaces.state);
 }
