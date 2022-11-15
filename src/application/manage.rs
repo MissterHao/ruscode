@@ -8,6 +8,7 @@ use crossterm::{
 use std::{
     error::Error,
     io,
+    sync::{Arc, Mutex},
     time::{Duration, Instant},
 };
 use tui::{
@@ -15,7 +16,7 @@ use tui::{
     Terminal,
 };
 
-pub async fn run(show_splash_screen: bool) -> Result<(), Box<dyn Error>> {
+pub fn run(show_splash_screen: bool) -> Result<(), Box<dyn Error>> {
     // setup terminal
     enable_raw_mode()?;
     let mut stdout = io::stdout();
@@ -67,18 +68,24 @@ fn run_app<B: Backend>(terminal: &mut Terminal<B>, mut app: App) -> io::Result<(
                         }
                     }
                 }
-
-                // if last_tick.elapsed() >= tick_rate {
-                //     app.on_tick();
-                //     last_tick = Instant::now();
-                // }
             }
             super::app::ApplicationStatus::SplashScreenReveal => {
                 terminal.draw(|f| ui::draw(f, &mut app))?;
                 if last_tick.elapsed() >= Duration::from_secs(1) {
-                    app.status = super::app::ApplicationStatus::Running;
+                    app.state_change(super::app::ApplicationStatus::Running)
                 }
             }
+            super::app::ApplicationStatus::PrepareEnvironment => match app.init_environment() {
+                Ok(()) => {
+                    if app.show_splash_screen {
+                        last_tick = Instant::now();
+                        app.state_change(super::app::ApplicationStatus::SplashScreenReveal);
+                    } else {
+                        app.state_change(super::app::ApplicationStatus::Running)
+                    }
+                }
+                Err(_) => panic!("Fail to prepare environment!"),
+            },
         }
     }
 }

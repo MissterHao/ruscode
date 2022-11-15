@@ -1,72 +1,34 @@
-use tui::widgets::ListState;
+use std::fmt;
 
+use crate::{
+    common::system::SystemPaths,
+    domain::{
+        entity::workspace::Workspace,
+        system::{init::init_application_folders, scan::scan_workspaces_path},
+    },
+    infrastructure::repository::{
+        create_database, error::DatabaseError, workspace_repository::WorkspaceRepository,
+    },
+};
+
+use super::{error::ApplicationError, stateful_list::StatefulList, tab_state::TabsState};
+
+#[derive(Clone, Copy)]
 pub enum ApplicationStatus {
-    Quit,
+    PrepareEnvironment,
     SplashScreenReveal,
     Running,
+    Quit,
 }
 
-pub struct TabsState<'a> {
-    pub titles: Vec<&'a str>,
-    pub index: usize,
-}
-
-impl<'a> TabsState<'a> {
-    pub fn new(titles: Vec<&'a str>) -> TabsState {
-        TabsState { titles, index: 0 }
-    }
-    pub fn next(&mut self) {
-        self.index = (self.index + 1) % self.titles.len();
-    }
-
-    pub fn previous(&mut self) {
-        if self.index > 0 {
-            self.index -= 1;
-        } else {
-            self.index = self.titles.len() - 1;
+impl fmt::Display for ApplicationStatus {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match *self {
+            ApplicationStatus::PrepareEnvironment => write!(f, "SyncVSCode"),
+            ApplicationStatus::SplashScreenReveal => write!(f, "SplashScreenReveal"),
+            ApplicationStatus::Running => write!(f, "Running"),
+            ApplicationStatus::Quit => write!(f, "Quit"),
         }
-    }
-}
-
-pub struct StatefulList<T> {
-    pub state: ListState,
-    pub items: Vec<T>,
-}
-
-impl<T> StatefulList<T> {
-    pub fn with_items(items: Vec<T>) -> StatefulList<T> {
-        StatefulList {
-            state: ListState::default(),
-            items,
-        }
-    }
-
-    pub fn next(&mut self) {
-        let i = match self.state.selected() {
-            Some(i) => {
-                if i >= self.items.len() - 1 {
-                    0
-                } else {
-                    i + 1
-                }
-            }
-            None => 0,
-        };
-        self.state.select(Some(i));
-    }
-
-    pub fn previous(&mut self) {
-        let i = match self.state.selected() {
-            Some(i) => {
-                if i == 0 {
-                    self.items.len() - 1
-                } else {
-                    i - 1
-                }
-            }
-            None => 0,
-        };
-        self.state.select(Some(i));
     }
 }
 
@@ -74,6 +36,8 @@ pub struct App<'a> {
     pub title: &'a str,
     pub tabs: TabsState<'a>,
     pub status: ApplicationStatus,
+    pub show_splash_screen: bool,
+    pub workspaces: StatefulList<Workspace>,
 }
 
 impl<'a> App<'a> {
@@ -81,11 +45,9 @@ impl<'a> App<'a> {
         App {
             title,
             tabs: TabsState::new(vec!["Workspaces", "Settings"]),
-            status: if show_splash_screen {
-                ApplicationStatus::SplashScreenReveal
-            } else {
-                ApplicationStatus::Running
-            },
+            status: ApplicationStatus::PrepareEnvironment,
+            show_splash_screen: show_splash_screen,
+            workspaces: StatefulList::with_items(vec![]),
         }
     }
 
@@ -98,11 +60,11 @@ impl<'a> App<'a> {
     }
 
     pub fn on_up(&mut self) {
-        // self.tasks.previous();
+        self.workspaces.previous();
     }
 
     pub fn on_down(&mut self) {
-        // self.tasks.next();
+        self.workspaces.next();
     }
 
     pub fn enter_in_workspace(&mut self) {}
@@ -115,4 +77,57 @@ impl<'a> App<'a> {
     }
 
     pub fn on_tick(&mut self) {}
+
+    pub fn scan_workspaces(&mut self) -> Result<Vec<Workspace>, ApplicationError> {
+        Ok(scan_workspaces_path())
+    }
+
+    fn create_database(&self, path: &str) -> Result<(), DatabaseError> {
+        create_database(path)?;
+        Ok(())
+    }
+
+    /// Init environment
+    pub fn init_environment(&mut self) -> Result<(), ApplicationError> {
+        // Default app folder create
+        init_application_folders().expect("Failed to create application folders.");
+
+        // Make sure database is always exists
+        self.create_database(SystemPaths::database().as_str())
+            .expect("Database cannot be created.");
+
+        // Scan and get all workspace json file path
+        let workspaces = self.scan_workspaces().expect("Scanning workspaces failed.");
+
+        // Sync current new workspaces data to database
+        let ret = WorkspaceRepository::sync_to_database(&workspaces)
+            .expect("Syncing workspaces data failed.");
+
+        self.workspaces.items = ret;
+        Ok(())
+    }
+
+    pub fn state_change(&mut self, next_state: ApplicationStatus) {
+        match (self.status, next_state) {
+            // Starts from SyncData
+            (ApplicationStatus::PrepareEnvironment, ApplicationStatus::Running) => {
+                self.status = ApplicationStatus::Running
+            }
+            (ApplicationStatus::PrepareEnvironment, ApplicationStatus::SplashScreenReveal) => {
+                self.status = ApplicationStatus::SplashScreenReveal
+            }
+
+            // Starts from Splash Screen
+            (ApplicationStatus::SplashScreenReveal, ApplicationStatus::Running) => {
+                self.status = ApplicationStatus::Running
+            }
+
+            // Starts from Running
+            (ApplicationStatus::Running, ApplicationStatus::Quit) => {
+                self.status = ApplicationStatus::Quit
+            }
+            // () => self.status = ApplicationStatus::Quit,
+            _ => panic!("Cannot transit from {} to {}", &self.status, &next_state),
+        };
+    }
 }

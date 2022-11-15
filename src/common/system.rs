@@ -14,14 +14,50 @@ impl SystemPaths {
         } else {
             Command::new("sh")
                 .arg("-c")
-                .arg("pwd")
+                .arg("getent passwd \"$USER\" | cut -d: -f6 ")
                 .output()
                 .expect("failed to execute process")
         };
 
         let home = strip_trailing_newline(str::from_utf8(&output.stdout).unwrap());
 
-        String::from_str(home).unwrap()
+        home.to_string().replace("\\\\", "\\")
+    }
+
+    pub fn vscode_workspace_storage_path() -> String {
+        let home = SystemPaths::home_dir();
+        if cfg!(target_os = "windows") {
+            format!(
+                "{}/AppData/Roaming/Code/User/workspaceStorage/**/workspace.json",
+                home,
+            )
+        } else {
+            todo!()
+        }
+    }
+
+    // Application local folder
+    /// Application local folder for Windows Operation System
+    #[cfg(target_os = "windows")]
+    pub fn application_data_folder() -> String {
+        let home = SystemPaths::home_dir();
+        format!("{}/AppData/Local/ruscode", home)
+    }
+
+    /// Application local folder for not Windows Operation System
+    #[cfg(not(target_os = "windows"))]
+    pub fn application_data_folder() -> String {
+        String::new("/var/lib/ruscode")
+    }
+
+    /// Database path
+    pub fn database_folder() -> String {
+        format!("{}/database", SystemPaths::application_data_folder())
+    }
+
+    /// Database path
+    pub fn database() -> String {
+        format!("{}/data.db", SystemPaths::database_folder())
     }
 }
 

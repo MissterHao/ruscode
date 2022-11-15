@@ -1,3 +1,8 @@
+use std::{
+    cell::RefCell,
+    sync::{Arc, Mutex},
+};
+
 use crate::application::app::App;
 use tui::{
     backend::Backend,
@@ -29,7 +34,8 @@ pub fn draw<B: Backend>(f: &mut Frame<B>, app: &mut App) {
     match app.status {
         crate::application::app::ApplicationStatus::Quit => {}
         crate::application::app::ApplicationStatus::Running => draw_application(f, app),
-        crate::application::app::ApplicationStatus::SplashScreenReveal => {
+        crate::application::app::ApplicationStatus::SplashScreenReveal
+        | crate::application::app::ApplicationStatus::PrepareEnvironment => {
             draw_splash_screen(f, app)
         }
     }
@@ -109,7 +115,7 @@ where
         .constraints([Constraint::Percentage(60), Constraint::Min(40)].as_ref())
         .split(area);
 
-    draw_management_control_block(f, chunks[0]);
+    draw_management_control_block(f, app, chunks[0]);
     draw_management_content_info_block(f, chunks[1]);
 }
 
