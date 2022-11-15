@@ -20,10 +20,14 @@ where
         }
     }
 
+    pub fn unselected(&mut self) {
+        self.state.select(None);
+    }
+
     pub fn next(&mut self) {
-        // if self.items.len() <= 0 {
-        //     return;
-        // }
+        if self.items.len() <= 0 {
+            return;
+        }
 
         let i = match self.state.selected() {
             Some(i) => {
@@ -39,9 +43,9 @@ where
     }
 
     pub fn previous(&mut self) {
-        // if self.items.len() <= 0 {
-        //     return;
-        // }
+        if self.items.len() <= 0 {
+            return;
+        }
         let i = match self.state.selected() {
             Some(i) => {
                 if i == 0 {

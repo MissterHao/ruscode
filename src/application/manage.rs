@@ -60,10 +60,12 @@ fn run_app<B: Backend>(terminal: &mut Terminal<B>, mut app: App) -> io::Result<(
                         match key.code {
                             KeyCode::Esc => app.on_escape_application(),
                             KeyCode::Tab => app.next_tab(),
-                            KeyCode::Up => app.on_up(),
-                            KeyCode::Down => app.on_down(),
+                            KeyCode::Up => app.on_up_list(),
+                            KeyCode::Down => app.on_down_list(),
+                            KeyCode::Right => app.enter_detail_mode(),
+                            KeyCode::Left => app.enter_search_mode(),
                             KeyCode::Char(c) => app.on_key(c),
-                            KeyCode::Enter => app.enter_in_workspace(),
+                            KeyCode::Enter => app.on_enter(),
                             _ => {}
                         }
                     }

@@ -29,7 +29,7 @@ use super::text::{DETAIL_MODE_HELP_TEXT, SEARCH_MODE_HELP_TEXT};
 
 /// Display detail information of selected vscode workspace
 ///  
-pub fn draw_management_content_info_block<B>(f: &mut Frame<B>, area: Rect)
+pub fn draw_management_content_info_block<B>(f: &mut Frame<B>, app: &mut App, area: Rect)
 where
     B: Backend,
 {
@@ -38,6 +38,12 @@ where
         .split(area);
 
     let p = Paragraph::new("Workspace detail 🔍")
+        .style(match app.control_mode {
+            crate::application::app::ApplicationControlMode::SearchMode => Style::default(),
+            crate::application::app::ApplicationControlMode::DetailMode => Style::default()
+                .fg(Color::Green)
+                .add_modifier(Modifier::DIM),
+        })
         .alignment(Alignment::Center)
         .block(
             Block::default()

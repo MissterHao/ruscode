@@ -116,7 +116,7 @@ where
         .split(area);
 
     draw_management_control_block(f, app, chunks[0]);
-    draw_management_content_info_block(f, chunks[1]);
+    draw_management_content_info_block(f, app, chunks[1]);
 }
 
 /// Render ruscode setting tab UI
