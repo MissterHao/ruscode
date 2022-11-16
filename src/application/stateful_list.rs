@@ -20,6 +20,13 @@ where
         }
     }
 
+    pub fn has_selected_item(&self) -> bool {
+        match self.state.selected() {
+            Some(_) => true,
+            None => false,
+        }
+    }
+
     pub fn unselected(&mut self) {
         self.state.select(None);
     }

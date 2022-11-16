@@ -76,6 +76,10 @@ impl<'a> App<'a> {
     }
 
     pub fn enter_detail_mode(&mut self) {
+        if !self.workspaces.has_selected_item() {
+            return;
+        };
+
         match self.control_mode {
             ApplicationControlMode::SearchMode => {
                 self.control_mode = ApplicationControlMode::DetailMode;
