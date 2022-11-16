@@ -2,10 +2,7 @@ use crate::domain::value_object::WorkspaceJson;
 use rusqlite::Row;
 use urlencoding::decode;
 
-use std::{
-    hash::{Hash, Hasher},
-    path::Path,
-};
+use std::hash::{Hash, Hasher};
 
 /// Workspace Location enumerate
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -17,12 +14,15 @@ pub enum WorkspaceLocation {
 
 /// Implement default associate function for Workspace Location enumerate
 impl WorkspaceLocation {
+    /// Default value of WorkspaceLocation
     fn default() -> Self {
         WorkspaceLocation::NotRecognize
     }
 }
 
+/// An explicit conversion from a &str to WorkspaceLocation
 impl From<&str> for WorkspaceLocation {
+    /// Generate WorkspaceLocation from &str
     fn from(path: &str) -> Self {
         if path.starts_with("file://") {
             WorkspaceLocation::Local
@@ -44,6 +44,7 @@ pub struct Workspace {
     pub title: String,
 }
 
+/// Implement Hash for HashSet. Make Workspace a hashable type.
 impl Hash for Workspace {
     fn hash<H: Hasher>(&self, state: &mut H) {
         self.path.hash(state);
@@ -63,14 +64,16 @@ impl Workspace {
 
     pub fn from_dbrow(row: &Row) -> Self {
         let raw_path: String = row.get(0).expect("msg");
+        let decode_path = decode(raw_path.as_str()).expect("UTF-8").to_string();
         Workspace {
             path: raw_path.clone(),
-            decode_path: decode(raw_path.as_str()).expect("UTF-8").to_string(),
+            decode_path: decode_path.clone(),
             location_type: raw_path.as_str().into(),
-            title: Path::new(&raw_path)
-                .file_stem()
-                .unwrap()
-                .to_str()
+            title: decode_path
+                .clone()
+                .split("/")
+                .collect::<Vec<&str>>()
+                .last()
                 .unwrap()
                 .to_string(),
         }
@@ -87,16 +90,16 @@ impl From<WorkspaceJson> for Workspace {
     fn from(_wj: WorkspaceJson) -> Self {
         let decode_folder_path = decode(_wj.folder.as_str()).expect("UTF-8").to_string();
         let location = WorkspaceLocation::from(_wj.folder.as_str());
-        let workspace_path_obj = Path::new(decode_folder_path.as_str());
 
         Workspace {
             path: _wj.folder,
             decode_path: decode_folder_path.clone(),
             location_type: location,
-            title: workspace_path_obj
-                .file_stem()
-                .unwrap()
-                .to_str()
+            title: decode_folder_path
+                .clone()
+                .split("/")
+                .collect::<Vec<&str>>()
+                .last()
                 .unwrap()
                 .to_string(),
         }
@@ -108,16 +111,16 @@ impl From<&str> for Workspace {
         let decode_folder_path = decode(raw_path).expect("UTF-8").to_string();
 
         let location = WorkspaceLocation::from(raw_path);
-        let workspace_path_obj = Path::new(raw_path);
 
         Workspace {
             path: raw_path.to_string(),
-            decode_path: decode_folder_path,
+            decode_path: decode_folder_path.clone(),
             location_type: location,
-            title: workspace_path_obj
-                .file_stem()
-                .unwrap()
-                .to_str()
+            title: decode_folder_path
+                .clone()
+                .split("/")
+                .collect::<Vec<&str>>()
+                .last()
                 .unwrap()
                 .to_string(),
         }
