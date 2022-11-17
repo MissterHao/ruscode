@@ -8,7 +8,6 @@ use crossterm::{
 use std::{
     error::Error,
     io,
-    sync::{Arc, Mutex},
     time::{Duration, Instant},
 };
 use tui::{
