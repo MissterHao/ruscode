@@ -1,8 +1,3 @@
-use std::{
-    cell::RefCell,
-    sync::{Arc, Mutex},
-};
-
 use crate::application::app::App;
 use tui::{
     backend::Backend,
@@ -85,7 +80,7 @@ where
 /// # Arguments
 /// * `f` - Franme
 /// * `app` - App struct
-fn draw_splash_screen<B>(f: &mut Frame<B>, app: &mut App)
+fn draw_splash_screen<B>(f: &mut Frame<B>, _app: &mut App)
 where
     B: Backend,
 {
@@ -125,11 +120,11 @@ where
 /// * `f` - Franme
 /// * `app` - App struct
 /// * `area` - area of frame
-fn draw_settings_tab<B>(f: &mut Frame<B>, _app: &mut App, area: Rect)
+fn draw_settings_tab<B>(_f: &mut Frame<B>, _app: &mut App, area: Rect)
 where
     B: Backend,
 {
-    let chunks = Layout::default()
+    let _chunks = Layout::default()
         .direction(Direction::Horizontal)
         .constraints([Constraint::Ratio(1, 2), Constraint::Ratio(1, 2)])
         .split(area);

@@ -34,17 +34,17 @@ CREATE INDEX idx_tags ON tags_workspaces(tags_id);
 pub fn create_database(path: &str) -> Result<bool, DatabaseError> {
     let db_connection: Connection = match Connection::open(path) {
         Ok(con) => con,
-        Err(err) => {
+        Err(_err) => {
             println!("Open error");
             Connection::open(path)?
         }
     };
 
     match db_connection.execute(SQL, ()) {
-        Ok(val) => {
+        Ok(_val) => {
             // successfully create table
         }
-        Err(e) => {
+        Err(_e) => {
             // table already existed
         }
     }
@@ -55,7 +55,7 @@ pub fn create_database(path: &str) -> Result<bool, DatabaseError> {
 pub fn get_db_connection(path: &str) -> Result<Connection, DatabaseError> {
     let db_connection: Connection = match Connection::open(path) {
         Ok(con) => con,
-        Err(err) => Connection::open(path)?,
+        Err(_err) => Connection::open(path)?,
     };
 
     Ok(db_connection)

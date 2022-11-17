@@ -1,15 +1,16 @@
+use crossbeam_channel::bounded;
+use glob::glob;
 use std::io::Error;
 use std::str::FromStr;
+use std::thread;
 use std::{fs, str};
 extern crate glob;
+
 use crate::common::system::SystemPaths;
 use crate::domain::entity::workspace::Workspace;
 use crate::domain::value_object::WorkspaceJson;
-use glob::glob;
-use std::thread;
 
 fn scan_vscode_workspacestorage_from_system() -> Result<Vec<String>, Error> {
-    let home = SystemPaths::home_dir();
     let tasks = glob(SystemPaths::vscode_workspace_storage_path().as_str())
         .expect("Fali to read glob pattern")
         .into_iter()
@@ -28,8 +29,6 @@ fn extract_json_file(path: &str) -> Option<WorkspaceJson> {
 }
 
 pub fn scan_workspaces_path() -> Vec<Workspace> {
-    use crossbeam_channel::{bounded, Sender};
-
     // Get all vscode workspace json files path
     let current_workspaces_list: Result<Vec<String>, Error> =
         scan_vscode_workspacestorage_from_system();
