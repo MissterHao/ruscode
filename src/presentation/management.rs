@@ -131,8 +131,7 @@ where
         .split(area);
 
     let items = List::new(
-        app.workspaces
-            .items
+        app.filtered_workspaces()
             .iter()
             .map(|x| {
                 let lines = vec![

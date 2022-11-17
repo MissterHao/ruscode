@@ -6,6 +6,7 @@ use crate::{
         entity::workspace::Workspace,
         system::{init::init_application_folders, scan::scan_workspaces_path},
     },
+    filter_sql,
     infrastructure::repository::{
         create_database, error::DatabaseError, workspace_repository::WorkspaceRepository,
     },
@@ -130,6 +131,23 @@ impl<'a> App<'a> {
             ApplicationControlMode::DetailMode => {
                 todo!()
             }
+        }
+    }
+
+    pub fn filtered_workspaces(&mut self) -> Vec<Workspace> {
+        if self.search_text.starts_with("#") {
+            vec![]
+        } else if self.search_text.len() > 0 {
+            // let _sql = filter_sql!("workspaces", format!("path LIKE '%{}%'", self.search_text));
+            self.workspaces
+                .items
+                .clone()
+                .iter()
+                .filter(|x| x.path.contains(&self.search_text))
+                .map(|x| x.clone())
+                .collect()
+        } else {
+            self.workspaces.items.clone()
         }
     }
 

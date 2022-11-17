@@ -1,5 +1,6 @@
 use rusqlite::params;
 use std::collections::HashSet;
+use std::result;
 
 use crate::application::error::ApplicationError;
 use crate::common::system::SystemPaths;
@@ -28,7 +29,10 @@ impl Repository for WorkspaceRepository {
         let workspace_iter = stmt
             .query_map([], |row| Ok(Workspace::from_dbrow(row)))
             .expect("Failed to transform database row to entity.");
-        vec![]
+
+        workspace_iter
+            .map(|x| x.unwrap())
+            .collect::<Vec<Workspace>>()
     }
 
     fn insert_or_create(&self, entity: &Self::EntityType) -> Self::EntityType {
@@ -73,6 +77,24 @@ impl Repository for WorkspaceRepository {
 }
 
 impl WorkspaceRepository {
+    pub fn filter(sql: String) -> Result<Vec<Workspace>, ApplicationError> {
+        let db_connection = get_db_connection(SystemPaths::database().as_str())
+            .expect("Cannot get database connection.");
+
+        println!("{sql}");
+        let mut stmt = db_connection
+            .prepare(&sql)
+            .expect("Failed to select all workspaces.");
+
+        let workspace_iter = stmt
+            .query_map([], |row| Ok(Workspace::from_dbrow(row)))
+            .expect("Failed to transform database row to entity.");
+
+        Ok(workspace_iter
+            .map(|x| x.unwrap())
+            .collect::<Vec<Workspace>>())
+    }
+
     pub fn sync_to_database(
         curr_workspaces: &Vec<Workspace>,
     ) -> Result<Vec<Workspace>, ApplicationError> {

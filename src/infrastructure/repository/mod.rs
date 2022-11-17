@@ -1,4 +1,5 @@
 pub mod error;
+pub mod macros;
 pub mod workspace_repository;
 
 use self::error::DatabaseError;

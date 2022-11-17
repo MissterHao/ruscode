@@ -6,7 +6,7 @@ macro_rules! filter_sql {
     ($table:expr, $($condiction:expr),* ) => {
         {
             let conds = vec![
-                $($condiction , )+
+                $($condiction.to_string() , )+
             ];
             format!("{}{}", format!("select * from {} where ", $table), conds.join(" & "))
         }
