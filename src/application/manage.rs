@@ -66,6 +66,7 @@ fn run_app<B: Backend>(terminal: &mut Terminal<B>, mut app: App) -> io::Result<(
                             KeyCode::Left => app.enter_search_mode(),
                             KeyCode::Char(c) => app.on_key(c),
                             KeyCode::Enter => app.on_enter(),
+                            KeyCode::Backspace => app.on_backspace(),
                             _ => {}
                         }
                     }
