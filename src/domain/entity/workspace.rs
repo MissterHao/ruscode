@@ -1,4 +1,5 @@
 use crate::domain::value_object::WorkspaceJson;
+use regex::Regex;
 use rusqlite::Row;
 use urlencoding::decode;
 
@@ -79,6 +80,11 @@ impl Workspace {
                 .unwrap()
                 .to_string(),
         }
+    }
+
+    pub fn strip_decode_path(&self) -> String {
+        let strip_uri_prefix = Regex::new(r"(file|vscode-remote):[/]+").unwrap();
+        strip_uri_prefix.replace(&self.decode_path, "").to_string()
     }
 }
 

@@ -143,7 +143,7 @@ where
                         Style::default().add_modifier(Modifier::BOLD),
                     )),
                     Spans::from(Span::styled(
-                        x.decode_path.clone(),
+                        x.strip_decode_path().clone(),
                         Style::default().add_modifier(Modifier::DIM),
                     )),
                 ];
