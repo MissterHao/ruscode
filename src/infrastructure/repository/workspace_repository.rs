@@ -1,6 +1,5 @@
 use rusqlite::params;
 use std::collections::HashSet;
-use std::result;
 
 use crate::application::error::ApplicationError;
 use crate::common::system::SystemPaths;
@@ -49,7 +48,7 @@ impl Repository for WorkspaceRepository {
         Self::EntityType::from(entity.path.as_str())
     }
 
-    fn delete(&self, entity: &Self::EntityType) -> bool {
+    fn delete(&self, _entity: &Self::EntityType) -> bool {
         let db_connection = get_db_connection(SystemPaths::database().as_str())
             .expect("Cannot get database connection.");
 
@@ -57,7 +56,10 @@ impl Repository for WorkspaceRepository {
             .prepare(r#"DELETE FROM workspaces where"#)
             .expect("Failed to select all workspaces.");
 
-        true
+        match stmt.execute(()) {
+            Ok(_) => true,
+            Err(_) => false,
+        }
     }
 
     fn delete_entities(&self, entities: &Vec<Self::EntityType>) -> bool {
@@ -69,7 +71,7 @@ impl Repository for WorkspaceRepository {
             .expect("Failed to select all workspaces.");
 
         for entity in entities {
-            stmt.execute([entity.path.clone()]);
+            stmt.execute([entity.path.clone()]).unwrap();
         }
 
         true
@@ -77,6 +79,7 @@ impl Repository for WorkspaceRepository {
 }
 
 impl WorkspaceRepository {
+    #[allow(dead_code)]
     pub fn filter(sql: String) -> Result<Vec<Workspace>, ApplicationError> {
         let db_connection = get_db_connection(SystemPaths::database().as_str())
             .expect("Cannot get database connection.");

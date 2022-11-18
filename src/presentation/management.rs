@@ -130,8 +130,11 @@ where
         .constraints([Constraint::Min(0)].as_ref())
         .split(area);
 
+    app.workspaces.change_item_source(app.filtered_workspaces());
+
     let items = List::new(
-        app.filtered_workspaces()
+        app.workspaces
+            .items
             .iter()
             .map(|x| {
                 let lines = vec![

@@ -1,6 +1,6 @@
 use crate::common::text::strip_trailing_newline;
+use std::process::Command;
 use std::str;
-use std::{process::Command, str::FromStr};
 
 pub struct SystemPaths {}
 

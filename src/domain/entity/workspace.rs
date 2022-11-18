@@ -15,6 +15,7 @@ pub enum WorkspaceLocation {
 /// Implement default associate function for Workspace Location enumerate
 impl WorkspaceLocation {
     /// Default value of WorkspaceLocation
+    /// #[allow(dead_code)]
     fn default() -> Self {
         WorkspaceLocation::NotRecognize
     }
@@ -53,6 +54,7 @@ impl Hash for Workspace {
 
 /// Implement default associate function for Workspace Location enumerate
 impl Workspace {
+    #[allow(dead_code)]
     pub fn new() -> Self {
         Workspace {
             path: String::new(),

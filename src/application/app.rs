@@ -1,12 +1,12 @@
-use std::fmt;
+use std::{fmt, vec};
 
 use crate::{
     common::system::SystemPaths,
     domain::{
         entity::workspace::Workspace,
+        searching::parse::SearchingStrategy,
         system::{init::init_application_folders, scan::scan_workspaces_path},
     },
-    filter_sql,
     infrastructure::repository::{
         create_database, error::DatabaseError, workspace_repository::WorkspaceRepository,
     },
@@ -53,6 +53,7 @@ pub struct App<'a> {
     pub show_splash_screen: bool,
     pub workspaces: StatefulList<Workspace>,
     pub search_text: String,
+    workspaces_source: Vec<Workspace>,
 }
 
 impl<'a> App<'a> {
@@ -65,6 +66,7 @@ impl<'a> App<'a> {
             show_splash_screen: show_splash_screen,
             workspaces: StatefulList::with_items(vec![]),
             search_text: String::new(),
+            workspaces_source: vec![],
         }
     }
 
@@ -127,6 +129,8 @@ impl<'a> App<'a> {
         match self.control_mode {
             ApplicationControlMode::SearchMode => {
                 self.search_text.pop();
+                self.workspaces
+                    .change_item_source(self.filtered_workspaces());
             }
             ApplicationControlMode::DetailMode => {
                 todo!()
@@ -134,20 +138,22 @@ impl<'a> App<'a> {
         }
     }
 
-    pub fn filtered_workspaces(&mut self) -> Vec<Workspace> {
-        if self.search_text.starts_with("#") {
-            vec![]
-        } else if self.search_text.len() > 0 {
-            // let _sql = filter_sql!("workspaces", format!("path LIKE '%{}%'", self.search_text));
-            self.workspaces
-                .items
+    pub fn filtered_workspaces(&self) -> Vec<Workspace> {
+        let strategy: SearchingStrategy = self.search_text.clone().into();
+
+        match strategy.searching_type {
+            crate::domain::searching::parse::SearchingStrategyType::All => {
+                self.workspaces_source.clone()
+            }
+            crate::domain::searching::parse::SearchingStrategyType::Tags => todo!(),
+            crate::domain::searching::parse::SearchingStrategyType::PlainText => self
+                .workspaces_source
                 .clone()
                 .iter()
                 .filter(|x| x.path.contains(&self.search_text))
                 .map(|x| x.clone())
-                .collect()
-        } else {
-            self.workspaces.items.clone()
+                .collect(),
+            crate::domain::searching::parse::SearchingStrategyType::PlainTextMixTags => todo!(),
         }
     }
 
@@ -196,7 +202,8 @@ impl<'a> App<'a> {
         let ret = WorkspaceRepository::sync_to_database(&workspaces)
             .expect("Syncing workspaces data failed.");
 
-        self.workspaces.items = ret;
+        self.workspaces_source = ret;
+
         Ok(())
     }
 
