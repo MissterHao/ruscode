@@ -20,10 +20,34 @@ where
         }
     }
 
+    pub fn change_item_source(&mut self, items: Vec<T>) {
+        self.items = items;
+        match self.state.selected() {
+            Some(curr) => {
+                if curr > self.items.len() {
+                    self.state.select(Some(0));
+                }
+            }
+            None => self.state.select(None),
+        }
+    }
+
+    pub fn has_selected_item(&self) -> bool {
+        match self.state.selected() {
+            Some(_) => true,
+            None => false,
+        }
+    }
+
+    #[allow(dead_code)]
+    pub fn unselected(&mut self) {
+        self.state.select(None);
+    }
+
     pub fn next(&mut self) {
-        // if self.items.len() <= 0 {
-        //     return;
-        // }
+        if self.items.len() <= 0 {
+            return;
+        }
 
         let i = match self.state.selected() {
             Some(i) => {
@@ -39,9 +63,9 @@ where
     }
 
     pub fn previous(&mut self) {
-        // if self.items.len() <= 0 {
-        //     return;
-        // }
+        if self.items.len() <= 0 {
+            return;
+        }
         let i = match self.state.selected() {
             Some(i) => {
                 if i == 0 {

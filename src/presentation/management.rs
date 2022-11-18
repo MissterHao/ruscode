@@ -25,19 +25,31 @@ use tui::{
 
 use crate::application::app::App;
 
-use super::text::{DETAIL_MODE_HELP_TEXT, SEARCH_MODE_HELP_TEXT};
+use super::{
+    style::RuscodeStyle,
+    text::{DETAIL_MODE_HELP_TEXT, SEARCH_MODE_HELP_TEXT},
+};
 
 /// Display detail information of selected vscode workspace
 ///  
-pub fn draw_management_content_info_block<B>(f: &mut Frame<B>, area: Rect)
+pub fn draw_management_content_info_block<B>(f: &mut Frame<B>, app: &mut App, area: Rect)
 where
     B: Backend,
 {
+    // Split area in to chunks
     let chunks = Layout::default()
         .constraints([Constraint::Min(30)].as_ref())
         .split(area);
 
     let p = Paragraph::new("Workspace detail 🔍")
+        .style(match app.control_mode {
+            crate::application::app::ApplicationControlMode::SearchMode => {
+                RuscodeStyle::unfocus_mode()
+            }
+            crate::application::app::ApplicationControlMode::DetailMode => {
+                RuscodeStyle::focus_mode()
+            }
+        })
         .alignment(Alignment::Center)
         .block(
             Block::default()
@@ -52,6 +64,7 @@ pub fn draw_management_control_block<B>(f: &mut Frame<B>, app: &mut App, area: R
 where
     B: Backend,
 {
+    // Split area in to chunks
     let chunks = Layout::default()
         .direction(Direction::Vertical)
         .constraints([Constraint::Percentage(30), Constraint::Percentage(70)].as_ref())
@@ -66,18 +79,45 @@ fn draw_management_control_upper_bar<B>(f: &mut Frame<B>, app: &mut App, area: R
 where
     B: Backend,
 {
+    // Split area in to chunks
     let chunks = Layout::default()
         .direction(Direction::Horizontal)
         .constraints([Constraint::Percentage(50), Constraint::Percentage(50)].as_ref())
         .split(area);
 
-    let p = Paragraph::new(app.search_text.clone())
+    // Define and render "Search bar" block
+    let p = Paragraph::new(app.search_text.as_ref())
+        .style(match app.control_mode {
+            crate::application::app::ApplicationControlMode::SearchMode => {
+                RuscodeStyle::default_focus_mode()
+            }
+            crate::application::app::ApplicationControlMode::DetailMode => {
+                RuscodeStyle::unfocus_mode()
+            }
+        })
         .block(Block::default().borders(Borders::ALL).title(" Search "));
     f.render_widget(p, chunks[0]);
 
-    let help_text_paragraph =
-        Paragraph::new(DETAIL_MODE_HELP_TEXT).block(Block::default().borders(Borders::ALL));
+    // Define and render "help text" block
+    let help_text_paragraph = Paragraph::new(match app.control_mode {
+        crate::application::app::ApplicationControlMode::SearchMode => SEARCH_MODE_HELP_TEXT,
+        crate::application::app::ApplicationControlMode::DetailMode => DETAIL_MODE_HELP_TEXT,
+    })
+    .block(Block::default().borders(Borders::ALL))
+    .style(RuscodeStyle::success());
     f.render_widget(help_text_paragraph, chunks[1]);
+
+    // If the application is currently in Search mode ( which means search text is not empty )
+    // then, use UnicodeWidth to control position of cursor
+    if app.search_text.len() > 0 {
+        use unicode_width::UnicodeWidthStr;
+        f.set_cursor(
+            // Put cursor past the end of the input text
+            chunks[0].x + app.search_text.width() as u16 + 1,
+            // Move one line down, from the border to the input line
+            chunks[0].y + 1,
+        )
+    }
 }
 
 /// Render vscode workspace management tab UI
@@ -85,9 +125,12 @@ fn draw_management_control_workspace_list<B>(f: &mut Frame<B>, app: &mut App, ar
 where
     B: Backend,
 {
+    // Split area in to chunks
     let chunks = Layout::default()
         .constraints([Constraint::Min(0)].as_ref())
         .split(area);
+
+    app.workspaces.change_item_source(app.filtered_workspaces());
 
     let items = List::new(
         app.workspaces
@@ -104,10 +147,23 @@ where
                         Style::default().add_modifier(Modifier::DIM),
                     )),
                 ];
-                ListItem::new(lines).style(Style::default().fg(Color::White))
+                ListItem::new(lines).style(match app.control_mode {
+                    crate::application::app::ApplicationControlMode::SearchMode => {
+                        RuscodeStyle::default_font()
+                    }
+                    crate::application::app::ApplicationControlMode::DetailMode => {
+                        RuscodeStyle::unfocus_mode()
+                    }
+                })
             })
             .collect::<Vec<ListItem>>(),
     )
+    .style(match app.control_mode {
+        crate::application::app::ApplicationControlMode::SearchMode => {
+            RuscodeStyle::default_focus_mode()
+        }
+        crate::application::app::ApplicationControlMode::DetailMode => RuscodeStyle::unfocus_mode(),
+    })
     .block(
         Block::default()
             .borders(Borders::ALL)

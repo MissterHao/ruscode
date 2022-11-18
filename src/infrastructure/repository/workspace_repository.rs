@@ -1,4 +1,5 @@
 use rusqlite::params;
+use std::collections::HashSet;
 
 use crate::application::error::ApplicationError;
 use crate::common::system::SystemPaths;
@@ -7,20 +8,16 @@ use crate::domain::repository::base::Repository;
 
 use super::get_db_connection;
 
-use core::time;
-use std::collections::HashSet;
-use std::thread;
-
 pub struct WorkspaceRepository {}
 
 impl Repository for WorkspaceRepository {
     type EntityType = Workspace;
 
-    fn get_item_by_id(&self, id: &str) -> Self::EntityType {
+    fn get_item_by_id(&self, _id: &str) -> Self::EntityType {
         todo!()
     }
 
-    fn get_all_items(&self, id: &str) -> Vec<Self::EntityType> {
+    fn get_all_items(&self) -> Vec<Self::EntityType> {
         let db_connection = get_db_connection(SystemPaths::database().as_str())
             .expect("Cannot get database connection.");
 
@@ -31,7 +28,10 @@ impl Repository for WorkspaceRepository {
         let workspace_iter = stmt
             .query_map([], |row| Ok(Workspace::from_dbrow(row)))
             .expect("Failed to transform database row to entity.");
-        vec![]
+
+        workspace_iter
+            .map(|x| x.unwrap())
+            .collect::<Vec<Workspace>>()
     }
 
     fn insert_or_create(&self, entity: &Self::EntityType) -> Self::EntityType {
@@ -48,7 +48,7 @@ impl Repository for WorkspaceRepository {
         Self::EntityType::from(entity.path.as_str())
     }
 
-    fn delete(&self, entity: &Self::EntityType) -> bool {
+    fn delete(&self, _entity: &Self::EntityType) -> bool {
         let db_connection = get_db_connection(SystemPaths::database().as_str())
             .expect("Cannot get database connection.");
 
@@ -56,7 +56,10 @@ impl Repository for WorkspaceRepository {
             .prepare(r#"DELETE FROM workspaces where"#)
             .expect("Failed to select all workspaces.");
 
-        true
+        match stmt.execute(()) {
+            Ok(_) => true,
+            Err(_) => false,
+        }
     }
 
     fn delete_entities(&self, entities: &Vec<Self::EntityType>) -> bool {
@@ -68,7 +71,7 @@ impl Repository for WorkspaceRepository {
             .expect("Failed to select all workspaces.");
 
         for entity in entities {
-            stmt.execute([entity.path.clone()]);
+            stmt.execute([entity.path.clone()]).unwrap();
         }
 
         true
@@ -76,6 +79,25 @@ impl Repository for WorkspaceRepository {
 }
 
 impl WorkspaceRepository {
+    #[allow(dead_code)]
+    pub fn filter(sql: String) -> Result<Vec<Workspace>, ApplicationError> {
+        let db_connection = get_db_connection(SystemPaths::database().as_str())
+            .expect("Cannot get database connection.");
+
+        println!("{sql}");
+        let mut stmt = db_connection
+            .prepare(&sql)
+            .expect("Failed to select all workspaces.");
+
+        let workspace_iter = stmt
+            .query_map([], |row| Ok(Workspace::from_dbrow(row)))
+            .expect("Failed to transform database row to entity.");
+
+        Ok(workspace_iter
+            .map(|x| x.unwrap())
+            .collect::<Vec<Workspace>>())
+    }
+
     pub fn sync_to_database(
         curr_workspaces: &Vec<Workspace>,
     ) -> Result<Vec<Workspace>, ApplicationError> {

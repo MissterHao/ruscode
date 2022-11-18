@@ -5,7 +5,7 @@ use crate::common::system::SystemPaths;
 
 pub fn init_application_folders() -> Result<(), ApplicationInitError> {
     let database_path = SystemPaths::database_folder();
-    fs::create_dir_all(database_path);
+    fs::create_dir_all(database_path).expect("Cannot create application folders.");
 
     Ok(())
 }
