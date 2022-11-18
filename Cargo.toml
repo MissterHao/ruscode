@@ -31,6 +31,7 @@ regex = "1.7.0"
 
 
 [profile.release]
+# Enable Link Time Optimization 
 lto = true
 codegen-units = 1
 opt-level = 'z'
