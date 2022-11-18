@@ -1,6 +1,3 @@
-# ruscode
-This is an ultimate unify vscode entry point.
-
 <div align="center">
   <h1>ruscode</h1>
 
@@ -25,9 +22,9 @@ You only want to find out a small experimental project in the workspaces history
 
 **Ruscode** is a best soluation for you! 
 
-You can give your workspace tags to help you manage your workspaces. 
-You can search your workspaces by path, by folder name, or by tags which you gave before.
-You can use terminal-UI application with beautiful color theme without hurting your eyes.
+You can give your workspace tags to help you manage your workspaces.  
+You can search your workspaces by path, by folder name, or by tags which you gave before.  
+You can use terminal-UI application with beautiful color theme without hurting your eyes.  
 
 Awesome!
 
