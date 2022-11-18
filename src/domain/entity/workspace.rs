@@ -55,16 +55,7 @@ impl Hash for Workspace {
 
 /// Implement default associate function for Workspace Location enumerate
 impl Workspace {
-    #[allow(dead_code)]
-    pub fn new() -> Self {
-        Workspace {
-            path: String::new(),
-            decode_path: String::new(),
-            location_type: WorkspaceLocation::default(),
-            title: String::new(),
-        }
-    }
-
+    /// Transform database row to Workspace
     pub fn from_dbrow(row: &Row) -> Self {
         let raw_path: String = row.get(0).expect("msg");
         let decode_path = decode(raw_path.as_str()).expect("UTF-8").to_string();
@@ -82,12 +73,16 @@ impl Workspace {
         }
     }
 
+    /// Strip uri prefix of decoded workspace path
     pub fn strip_decode_path(&self) -> String {
         let strip_uri_prefix = Regex::new(r"(file|vscode-remote):[/]+").unwrap();
         strip_uri_prefix.replace(&self.decode_path, "").to_string()
     }
 }
 
+/// Implement PartialEq for Workspace
+///
+/// Use Workspace's original path as the crucial condiction
 impl PartialEq for Workspace {
     fn eq(&self, other: &Self) -> bool {
         self.path == other.path
