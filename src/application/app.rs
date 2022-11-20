@@ -70,6 +70,10 @@ impl<'a> App<'a> {
         }
     }
 
+    pub fn select_workspace(&self) -> Option<&Workspace> {
+        self.workspaces.selected_item()
+    }
+
     pub fn on_escape_application(&mut self) {
         self.status = ApplicationStatus::Quit;
     }

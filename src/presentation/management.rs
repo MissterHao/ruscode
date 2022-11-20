@@ -14,6 +14,8 @@
 //! ## Content Information Block:
 //! Display deatil information of selected vscode workspace.
 
+use std::{error::Error, vec};
+
 use tui::{
     backend::Backend,
     layout::{Alignment, Constraint, Direction, Layout, Rect},
@@ -23,9 +25,13 @@ use tui::{
     Frame,
 };
 
-use crate::application::app::App;
+use crate::{
+    application::app::App,
+    domain::{entity::workspace, system::folder_observer::last_modified},
+};
 
 use super::{
+    error::UIError,
     style::RuscodeStyle,
     text::{DETAIL_MODE_HELP_TEXT, SEARCH_MODE_HELP_TEXT},
 };
@@ -41,22 +47,80 @@ where
         .constraints([Constraint::Min(30)].as_ref())
         .split(area);
 
-    let p = Paragraph::new("Workspace detail 🔍")
-        .style(match app.control_mode {
-            crate::application::app::ApplicationControlMode::SearchMode => {
-                RuscodeStyle::unfocus_mode()
-            }
-            crate::application::app::ApplicationControlMode::DetailMode => {
-                RuscodeStyle::focus_mode()
-            }
-        })
-        .alignment(Alignment::Center)
+    let workspace_detail: Vec<Spans>;
+    match app.select_workspace() {
+        Some(selected_workspace) => {
+            workspace_detail = get_workspace_detail_text(selected_workspace).unwrap();
+        }
+        None => {
+            workspace_detail = vec![Spans::from(vec![Span::raw(
+                "More detail information, please use arrow key to select workspace.",
+            )])];
+        }
+    }
+
+    let p = Paragraph::new(workspace_detail)
+        .alignment(Alignment::Left)
         .block(
             Block::default()
+                .title("Workspace detail 🔍")
                 .borders(Borders::ALL)
+                .style(match app.control_mode {
+                    crate::application::app::ApplicationControlMode::SearchMode => {
+                        RuscodeStyle::unfocus_mode()
+                    }
+                    crate::application::app::ApplicationControlMode::DetailMode => {
+                        RuscodeStyle::focus_mode()
+                    }
+                })
                 .border_type(tui::widgets::BorderType::Rounded),
         );
     f.render_widget(p, chunks[0]);
+}
+
+fn get_workspace_detail_text(
+    selected_workspace: &workspace::Workspace,
+) -> Result<Vec<Spans>, UIError> {
+    let last_mod_result = last_modified(selected_workspace);
+    let last_mod_string = match last_mod_result {
+        Ok(val) => val,
+        Err(_) => {
+            return Err(UIError::DisplayWorkspaceFailed(
+                selected_workspace.decode_path.clone(),
+            ))
+        }
+    };
+
+    Ok(vec![
+        Spans::from(vec![
+            Span::raw("Workspace Name: "),
+            Span::styled(
+                selected_workspace.title.clone(),
+                Style::default().fg(Color::Yellow),
+            ),
+        ]),
+        Spans::from(vec![
+            Span::raw("Workspace Path: "),
+            match selected_workspace.location_type {
+                workspace::WorkspaceLocation::NotRecognize => Span::styled(
+                    "Can't recognize this workspace type.",
+                    Style::default().fg(Color::Red),
+                ),
+                workspace::WorkspaceLocation::Local => Span::styled(
+                    selected_workspace.strip_decode_path(),
+                    Style::default().fg(Color::Yellow),
+                ),
+                workspace::WorkspaceLocation::Remote => Span::styled(
+                    "This is a remote workspace",
+                    Style::default().fg(Color::Yellow),
+                ),
+            },
+        ]),
+        Spans::from(vec![
+            Span::raw("Last modified time: "),
+            Span::styled(last_mod_string, Style::default().fg(Color::Yellow)),
+        ]),
+    ])
 }
 
 /// Render vscode workspace management tab UI

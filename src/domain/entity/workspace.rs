@@ -16,7 +16,7 @@ pub enum WorkspaceLocation {
 /// Implement default associate function for Workspace Location enumerate
 impl WorkspaceLocation {
     /// Default value of WorkspaceLocation
-    /// #[allow(dead_code)]
+    #[allow(dead_code)]
     fn default() -> Self {
         WorkspaceLocation::NotRecognize
     }
