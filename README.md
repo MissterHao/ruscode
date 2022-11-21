@@ -11,6 +11,8 @@
         src="https://img.shields.io/github/issues/MissterHao/ruscode?style=flat-square" alt="Github Issue badge" /></a>
     <a href="https://github.com/MissterHao/ruscode"><img
         src="https://img.shields.io/github/license/MissterHao/ruscode?style=flat-square" alt="Lience badge" /></a>
+    <a href="https://github.com/MissterHao/ruscode"><img
+        src="https://img.shields.io/badge/rust-%23000000.svg?style=for-the-badge&logo=rust&logoColor=white" alt="Rust badge" ></a>
   </p>
 </div>
 
@@ -20,22 +22,24 @@
 After months of or even years of hard working, have you notice that there are tons of folder which are open by vscode before?  
 You only want to find out a small experimental project in the workspaces history list but it hard to find because of the numbers of list. 
 
-**Ruscode** is a best soluation for you! 
+**Ruscode** is the best soluation for you! 
 
-You can give your workspace tags to help you manage your workspaces. 
-You can search your workspaces by path, by folder name, or by tags which you gave before.
-You can use terminal-UI application with beautiful color theme without hurting your eyes.
+You can give your workspace tags to help you manage your workspaces.   
+You can search your workspaces by path, by folder name, or by tags which you gave before.  
+You can use terminal-UI application with beautiful color theme without hurting your eyes.  
 
 Awesome!
 
 ## Table of contents
 
-- [📦 Install](#install)
-- [🏹 Usage](#usage)
-- [📜 Licence](#licence)
-- [✨ Creator](#creator)
-- [🌈 Contributors](#contributors)
+- [📦 Install](#-install)
+- [🏹 Usage](#-usage)
+- [📜 Licence](#-licence)
+- [✨ Creator](#-creator)
+- [🌈 Contributors](#-contributors)
+- [🌟 Star History](#-star-history)
 
+## 📦 Install
 ## 🏹 Usage
 
 There are two mode in management page:
@@ -51,15 +55,14 @@ Also, you can find more detail of help text in the middle of screen.
 ### Detail Mode
 
 
-## Licence
+## 📜 Licence
 MIT
 
-## Creator
+## ✨ Creator
 - [MissterHao ( Hao-Wei )](https://www.linkedin.com/in/hao-wei-li/)
 
-## Contributors
-
-
+## 🌈 Contributors
+- [MissterHao ( Hao-Wei )](https://www.linkedin.com/in/hao-wei-li/)
 
 ## 🌟 Star History
 [![Star History Chart](https://api.star-history.com/svg?repos=MissterHao/ruscode&type=Date)](https://star-history.com/#MissterHao/ruscode&Date)
