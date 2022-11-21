@@ -81,14 +81,19 @@ where
 fn get_workspace_detail_text(
     selected_workspace: &workspace::Workspace,
 ) -> Result<Vec<Spans>, UIError> {
-    let last_mod_result = last_modified(selected_workspace);
-    let last_mod_string = match last_mod_result {
-        Ok(val) => val,
-        Err(_) => {
-            return Err(UIError::DisplayWorkspaceFailed(
-                selected_workspace.decode_path.clone(),
-            ))
-        }
+    let last_modified_span_text = match selected_workspace.location_type {
+        workspace::WorkspaceLocation::NotRecognize => Spans::from(vec![Span::raw("")]),
+        workspace::WorkspaceLocation::Local => match last_modified(selected_workspace) {
+            Ok(val) => Spans::from(vec![
+                Span::raw("Last modified time: "),
+                Span::styled(val, Style::default().fg(Color::Yellow)),
+            ]),
+            Err(_) => Spans::from(vec![Span::styled(
+                "Couldn't access selected workspace's directory path at local",
+                Style::default().fg(Color::Red),
+            )]),
+        },
+        workspace::WorkspaceLocation::Remote => Spans::from(vec![Span::raw("")]),
     };
 
     Ok(vec![
@@ -116,10 +121,7 @@ fn get_workspace_detail_text(
                 ),
             },
         ]),
-        Spans::from(vec![
-            Span::raw("Last modified time: "),
-            Span::styled(last_mod_string, Style::default().fg(Color::Yellow)),
-        ]),
+        last_modified_span_text,
     ])
 }
 

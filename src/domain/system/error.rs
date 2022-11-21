@@ -11,7 +11,7 @@ pub enum ApplicationInitError {
 
 #[derive(Error, Debug)]
 #[allow(dead_code)]
-pub enum SystenError {
+pub enum SystemError {
     #[error("Couldn't access local directory")]
     OpenWorkspaceFolderFailed,
 }
