@@ -50,11 +50,10 @@ pub fn scan_workspaces_path() -> Vec<Workspace> {
 
     let mut workapaces: Vec<Workspace> = Vec::new();
 
-    // Print the first 20 Fibonacci numbers.
-    for option_val in r.iter() {
-        if let Some(val) = option_val {
-            workapaces.push(val);
-        }
+    for val in r.iter().flatten() {
+        workapaces.push(val);
+        // if let Some(val) = option_val {
+        // }
     }
 
     workapaces

@@ -59,7 +59,7 @@ impl Repository for WorkspaceRepository {
         stmt.execute(()).is_ok()
     }
 
-    fn delete_entities(&self, entities: &Vec<Self::EntityType>) -> bool {
+    fn delete_entities(&self, entities: &[Self::EntityType]) -> bool {
         let db_connection = get_db_connection(SystemPaths::database().as_str())
             .expect("Cannot get database connection.");
 
@@ -96,7 +96,7 @@ impl WorkspaceRepository {
     }
 
     pub fn sync_to_database(
-        curr_workspaces: &Vec<Workspace>,
+        curr_workspaces: &[Workspace],
     ) -> Result<Vec<Workspace>, ApplicationError> {
         let db_connection = get_db_connection(SystemPaths::database().as_str())
             .expect("Cannot get database connection.");

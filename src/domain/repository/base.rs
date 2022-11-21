@@ -4,5 +4,5 @@ pub trait Repository {
     fn get_all_items(&self) -> Vec<Self::EntityType>;
     fn insert_or_create(&self, entity: &Self::EntityType) -> Self::EntityType;
     fn delete(&self, entity: &Self::EntityType) -> bool;
-    fn delete_entities(&self, entities: &Vec<Self::EntityType>) -> bool;
+    fn delete_entities(&self, entities: &[Self::EntityType]) -> bool;
 }
