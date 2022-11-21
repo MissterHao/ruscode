@@ -63,46 +63,14 @@ jobs:
             rust: "stable"
             targets: "x86_64-pc-windows-msvc"
     steps:
-      - name: Build '${{ matrix.os }}'
-        if: ${{ (matrix.os == 'ubuntu-22.04') && (matrix.container != 'redoxos/redoxer') }}
-        run: |
-          echo "OS: ${{ matrix.os }}"
-          echo "Container: ${{ matrix.container }}"
-          cargo build --color auto
-      - name: Build '${{ matrix.os}}'
-        if: ${{ (matrix.os != 'ubuntu-22.04') }}
-        run: |
-          echo "OS: ${{ matrix.os }}"
-          cargo build --color auto
-
-  unit_tests:
-    name: Unit tests
-    needs: [lint,build]
-    strategy:
-      matrix:
-        os: [ubuntu-latest, macOS-latest, windows-latest]
-        rust: [stable]
-        # rust: [stable, beta, nightly]
-        include:
-          - os: macOS-latest
-            rust: "stable"
-            #components: 'rustfmt, clippy'
-            targets: "x86_64-apple-darwin"
-          - os: ubuntu-latest
-            rust: "stable"
-            targets: "x86_64-unknown-linux-musl"
-          - os: windows-latest
-            rust: "stable"
-            targets: "x86_64-pc-windows-msvc"
-    runs-on: ${{ matrix.os }}
-    continue-on-error: ${{ matrix.rust == 'nightly' }}
-    steps:
       - name: Checkout
         uses: actions/checkout@v1
+
       - name: Set up Rust
         uses: hecrj/setup-rust-action@v1
         with:
           rust-version: ${{ matrix.rust }}
+
       - name: Cache
         uses: actions/cache@v2
         with:
@@ -110,7 +78,57 @@ jobs:
             ~/.cargo/registry
             ~/.cargo/git
             target
-          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
-      - name: Run unit tests
-        shell: bash
-        run: cargo test
+        key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+
+      - name: Build '${{ matrix.os }}'
+        if: ${{ (matrix.os == 'ubuntu-22.04') && (matrix.container != 'redoxos/redoxer') }}
+        run: |
+          echo "OS: ${{ matrix.os }}"
+          echo "Container: ${{ matrix.container }}"
+          cargo build --color auto
+
+      - name: Build '${{ matrix.os}}'
+        if: ${{ (matrix.os != 'ubuntu-22.04') }}
+        run: |
+          echo "OS: ${{ matrix.os }}"
+          cargo build --color auto
+
+  # unit_tests:
+  #   name: Unit tests
+  #   needs: [lint, build]
+  #   strategy:
+  #     matrix:
+  #       os: [ubuntu-latest, macOS-latest, windows-latest]
+  #       rust: [stable]
+  #       # rust: [stable, beta, nightly]
+  #       include:
+  #         - os: macOS-latest
+  #           rust: "stable"
+  #           #components: 'rustfmt, clippy'
+  #           targets: "x86_64-apple-darwin"
+  #         - os: ubuntu-latest
+  #           rust: "stable"
+  #           targets: "x86_64-unknown-linux-musl"
+  #         - os: windows-latest
+  #           rust: "stable"
+  #           targets: "x86_64-pc-windows-msvc"
+  #   runs-on: ${{ matrix.os }}
+  #   continue-on-error: ${{ matrix.rust == 'nightly' }}
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v1
+  #     - name: Set up Rust
+  #       uses: hecrj/setup-rust-action@v1
+  #       with:
+  #         rust-version: ${{ matrix.rust }}
+  #     - name: Cache
+  #       uses: actions/cache@v2
+  #       with:
+  #         path: |
+  #           ~/.cargo/registry
+  #           ~/.cargo/git
+  #           target
+  #         key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+  #     - name: Run unit tests
+  #       shell: bash
+  #       run: cargo test
