@@ -22,15 +22,11 @@ where
 
     pub fn selected_item(&self) -> Option<&T> {
         match self.state.selected() {
-            Some(idx) => {
-                Some(self.items.get(idx).unwrap())
-            },
-            None => {
-                None
-            }
+            Some(idx) => self.items.get(idx),
+            None => None,
         }
     }
-    
+
     pub fn change_item_source(&mut self, items: Vec<T>) {
         self.items = items;
         match self.state.selected() {
