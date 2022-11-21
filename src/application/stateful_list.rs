@@ -30,7 +30,7 @@ where
             }
         }
     }
-
+    
     pub fn change_item_source(&mut self, items: Vec<T>) {
         self.items = items;
         match self.state.selected() {

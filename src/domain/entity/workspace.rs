@@ -55,7 +55,16 @@ impl Hash for Workspace {
 
 /// Implement default associate function for Workspace Location enumerate
 impl Workspace {
-    /// Transform database row to Workspace
+    #[allow(dead_code)]
+    pub fn new() -> Self {
+        Workspace {
+            path: String::new(),
+            decode_path: String::new(),
+            location_type: WorkspaceLocation::default(),
+            title: String::new(),
+        }
+    }
+
     pub fn from_dbrow(row: &Row) -> Self {
         let raw_path: String = row.get(0).expect("msg");
         let decode_path = decode(raw_path.as_str()).expect("UTF-8").to_string();
