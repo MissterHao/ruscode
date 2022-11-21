@@ -55,7 +55,7 @@ impl From<&str> for SearchingStrategy {
         let tags = tag_re
             .captures_iter(origin)
             .map(|x| x.get(0).unwrap().as_str())
-            .map(|x| x.to_string().replace(' ', "").replace('#', ""))
+            .map(|x| x.to_string().replace([' ', '#'], "")sy)
             .filter(|x| !x.is_empty())
             .collect::<Vec<String>>();
 

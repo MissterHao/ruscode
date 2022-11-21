@@ -38,12 +38,9 @@ pub fn scan_workspaces_path() -> Vec<Workspace> {
         for json_path in current_workspaces_list.unwrap() {
             let data = extract_json_file(json_path.as_str());
 
-            match data {
-                Some(val) => {
-                    s.send(Some(Workspace::from(val)))
-                        .expect("Fail to send Workspace struct to main receive channel.");
-                }
-                None => {}
+            if let Some(val) = data {
+                s.send(Some(Workspace::from(val)))
+                    .expect("Fail to send Workspace struct to main receive channel.");
             }
         }
     });
