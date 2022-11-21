@@ -40,10 +40,7 @@ where
     }
 
     pub fn has_selected_item(&self) -> bool {
-        match self.state.selected() {
-            Some(_) => true,
-            None => false,
-        }
+        self.state.selected().is_some()
     }
 
     #[allow(dead_code)]
@@ -52,7 +49,7 @@ where
     }
 
     pub fn next(&mut self) {
-        if self.items.len() <= 0 {
+        if self.items.is_empty() {
             return;
         }
 
@@ -70,7 +67,7 @@ where
     }
 
     pub fn previous(&mut self) {
-        if self.items.len() <= 0 {
+        if self.items.is_empty() {
             return;
         }
         let i = match self.state.selected() {

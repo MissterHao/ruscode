@@ -56,10 +56,7 @@ impl Repository for WorkspaceRepository {
             .prepare(r#"DELETE FROM workspaces where"#)
             .expect("Failed to select all workspaces.");
 
-        match stmt.execute(()) {
-            Ok(_) => true,
-            Err(_) => false,
-        }
+        stmt.execute(()).is_ok()
     }
 
     fn delete_entities(&self, entities: &Vec<Self::EntityType>) -> bool {
@@ -122,12 +119,12 @@ impl WorkspaceRepository {
         // In db but not in folder anymore
         let insert_list = in_folder
             .difference(&in_db)
-            .map(|x| x.clone())
+            .cloned()
             .collect::<Vec<Workspace>>();
         // In folder but not in db anymore
         let delete_list = in_db
             .difference(&in_folder)
-            .map(|x| x.clone())
+            .cloned()
             .collect::<Vec<Workspace>>();
 
         // Create Workspace repository

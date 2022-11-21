@@ -1,6 +1,6 @@
 use regex::Regex;
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Eq)]
 pub enum SearchingStrategyType {
     All,
     Tags,
@@ -20,7 +20,7 @@ impl SearchingStrategyType {
 }
 
 /// Contain and Parse searching strategy information
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Eq)]
 pub struct SearchingStrategy {
     path: String,
     tags: Vec<String>,
@@ -55,8 +55,8 @@ impl From<&str> for SearchingStrategy {
         let tags = tag_re
             .captures_iter(origin)
             .map(|x| x.get(0).unwrap().as_str())
-            .map(|x| x.to_string().replace(" ", "").replace("#", ""))
-            .filter(|x| x.len() > 0)
+            .map(|x| x.to_string().replace(' ', "").replace('#', ""))
+            .filter(|x| !x.is_empty())
             .collect::<Vec<String>>();
 
         let filtered_text = tag_re.replace_all(origin, "");
@@ -64,8 +64,8 @@ impl From<&str> for SearchingStrategy {
 
         SearchingStrategy {
             path: String::from(filtered_text.clone()),
-            tags: tags,
             searching_type: SearchingStrategyType::parse(filtered_text.clone().len(), tags_count),
+            tags,
         }
     }
 }

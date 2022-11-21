@@ -73,8 +73,7 @@ impl Workspace {
             decode_path: decode_path.clone(),
             location_type: raw_path.as_str().into(),
             title: decode_path
-                .clone()
-                .split("/")
+                .split('/')
                 .collect::<Vec<&str>>()
                 .last()
                 .unwrap()
@@ -108,8 +107,7 @@ impl From<WorkspaceJson> for Workspace {
             decode_path: decode_folder_path.clone(),
             location_type: location,
             title: decode_folder_path
-                .clone()
-                .split("/")
+                .split('/')
                 .collect::<Vec<&str>>()
                 .last()
                 .unwrap()
@@ -129,8 +127,7 @@ impl From<&str> for Workspace {
             decode_path: decode_folder_path.clone(),
             location_type: location,
             title: decode_folder_path
-                .clone()
-                .split("/")
+                .split('/')
                 .collect::<Vec<&str>>()
                 .last()
                 .unwrap()

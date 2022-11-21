@@ -1,4 +1,4 @@
 edition = "2021"
-reorder_impl_items = true
 reorder_modules = true
 merge_derives = true
+# reorder_impl_items = true

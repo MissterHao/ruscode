@@ -14,7 +14,7 @@
 //! ## Content Information Block:
 //! Display deatil information of selected vscode workspace.
 
-use std::{error::Error, vec};
+use std::vec;
 
 use tui::{
     backend::Backend,
@@ -47,17 +47,14 @@ where
         .constraints([Constraint::Min(30)].as_ref())
         .split(area);
 
-    let workspace_detail: Vec<Spans>;
-    match app.select_workspace() {
-        Some(selected_workspace) => {
-            workspace_detail = get_workspace_detail_text(selected_workspace).unwrap();
-        }
+    let workspace_detail: Vec<Spans> = match app.select_workspace() {
+        Some(selected_workspace) => get_workspace_detail_text(selected_workspace).unwrap(),
         None => {
-            workspace_detail = vec![Spans::from(vec![Span::raw(
+            vec![Spans::from(vec![Span::raw(
                 "More detail information, please use arrow key to select workspace.",
-            )])];
+            )])]
         }
-    }
+    };
 
     let p = Paragraph::new(workspace_detail)
         .alignment(Alignment::Left)
@@ -175,7 +172,7 @@ where
 
     // If the application is currently in Search mode ( which means search text is not empty )
     // then, use UnicodeWidth to control position of cursor
-    if app.search_text.len() > 0 {
+    if !app.search_text.is_empty() {
         use unicode_width::UnicodeWidthStr;
         f.set_cursor(
             // Put cursor past the end of the input text
@@ -209,7 +206,7 @@ where
                         Style::default().add_modifier(Modifier::BOLD),
                     )),
                     Spans::from(Span::styled(
-                        x.strip_decode_path().clone(),
+                        x.strip_decode_path(),
                         Style::default().add_modifier(Modifier::DIM),
                     )),
                 ];

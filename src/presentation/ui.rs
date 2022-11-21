@@ -10,7 +10,7 @@ use tui::{
 
 use super::management::{draw_management_content_info_block, draw_management_control_block};
 
-const FIGLET_ASCII_LOGO: &'static str = r#"
+const FIGLET_ASCII_LOGO: &str = r#"
 
 
 

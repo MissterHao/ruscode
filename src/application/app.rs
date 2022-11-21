@@ -64,7 +64,7 @@ impl<'a> App<'a> {
             tabs: TabsState::new(vec!["Workspaces", "Settings"]),
             status: ApplicationStatus::PrepareEnvironment,
             control_mode: ApplicationControlMode::default(),
-            show_splash_screen: show_splash_screen,
+            show_splash_screen,
             workspaces: StatefulList::with_items(vec![]),
             search_text: String::new(),
             workspaces_source: vec![],
@@ -88,20 +88,14 @@ impl<'a> App<'a> {
             return;
         };
 
-        match self.control_mode {
-            ApplicationControlMode::SearchMode => {
-                self.control_mode = ApplicationControlMode::DetailMode;
-            }
-            _ => {}
+        if let ApplicationControlMode::SearchMode = self.control_mode {
+            self.control_mode = ApplicationControlMode::DetailMode;
         }
     }
 
     pub fn enter_search_mode(&mut self) {
-        match self.control_mode {
-            ApplicationControlMode::DetailMode => {
-                self.control_mode = ApplicationControlMode::SearchMode;
-            }
-            _ => {}
+        if let ApplicationControlMode::DetailMode = self.control_mode {
+            self.control_mode = ApplicationControlMode::SearchMode;
         }
     }
 
@@ -156,7 +150,7 @@ impl<'a> App<'a> {
                 .clone()
                 .iter()
                 .filter(|x| x.path.contains(&self.search_text))
-                .map(|x| x.clone())
+                .cloned()
                 .collect(),
             crate::domain::searching::parse::SearchingStrategyType::PlainTextMixTags => todo!(),
         }
@@ -166,18 +160,17 @@ impl<'a> App<'a> {
     fn open_workspace(&mut self) {
         match self.select_workspace() {
             Some(workspace) => {
-                match workspace.location_type {
-                    crate::domain::entity::workspace::WorkspaceLocation::Local => {
-                        // Use cmd as program instead
-                        // https://github.com/rust-lang/rust/issues/95957
-                        Command::new("cmd")
-                            .arg("/C")
-                            .arg("code")
-                            .arg(workspace.strip_decode_path())
-                            .spawn()
-                            .expect("code command failed to start");
-                    }
-                    _ => {}
+                if workspace.location_type
+                    == crate::domain::entity::workspace::WorkspaceLocation::Local
+                {
+                    // Use cmd as program instead
+                    // https://github.com/rust-lang/rust/issues/95957
+                    Command::new("cmd")
+                        .arg("/C")
+                        .arg("code")
+                        .arg(workspace.strip_decode_path())
+                        .spawn()
+                        .expect("code command failed to start");
                 }
             }
             None => {}

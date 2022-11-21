@@ -1,18 +1,11 @@
-use chrono::{format, DateTime, TimeZone, Utc};
+use chrono::{TimeZone, Utc};
+use std::{fs, time::UNIX_EPOCH};
 
 use crate::domain::entity::workspace::Workspace;
-use std::{
-    fs,
-    time::{SystemTime, UNIX_EPOCH},
-};
 
 use super::error::SystemError;
 
 pub fn last_modified(workspace: &Workspace) -> Result<String, SystemError> {
-    // let mut entries: Vec<fs::DirEntry> = fs::read_dir(workspace.strip_decode_path())
-    //     .expect("Couldn't access local directory")
-    //     .flatten() // Remove failed
-    //     .collect();
     let result: Result<Vec<fs::DirEntry>, _> = match fs::read_dir(workspace.strip_decode_path()) {
         Ok(val) => Ok(val.flatten().collect()),
         Err(_) => return Err(SystemError::OpenWorkspaceFolderFailed),
