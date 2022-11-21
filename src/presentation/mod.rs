@@ -1,3 +1,4 @@
+mod error;
 mod management;
 pub mod style;
 mod text;

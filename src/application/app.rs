@@ -1,3 +1,4 @@
+use std::process::Command;
 use std::{fmt, vec};
 
 use crate::{
@@ -68,6 +69,10 @@ impl<'a> App<'a> {
             search_text: String::new(),
             workspaces_source: vec![],
         }
+    }
+
+    pub fn select_workspace(&self) -> Option<&Workspace> {
+        self.workspaces.selected_item()
     }
 
     pub fn on_escape_application(&mut self) {
@@ -158,7 +163,26 @@ impl<'a> App<'a> {
     }
 
     /// Open workspace by vscode
-    fn open_workspace(&mut self) {}
+    fn open_workspace(&mut self) {
+        match self.select_workspace() {
+            Some(workspace) => {
+                match workspace.location_type {
+                    crate::domain::entity::workspace::WorkspaceLocation::Local => {
+                        // Use cmd as program instead
+                        // https://github.com/rust-lang/rust/issues/95957
+                        Command::new("cmd")
+                            .arg("/C")
+                            .arg("code")
+                            .arg(workspace.strip_decode_path())
+                            .spawn()
+                            .expect("code command failed to start");
+                    }
+                    _ => {}
+                }
+            }
+            None => {}
+        }
+    }
 
     /// Enter new tag for selected Workspace
     fn enter_new_tag(&mut self) {}

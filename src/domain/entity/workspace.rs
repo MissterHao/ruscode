@@ -1,4 +1,5 @@
 use crate::domain::value_object::WorkspaceJson;
+use regex::Regex;
 use rusqlite::Row;
 use urlencoding::decode;
 
@@ -15,7 +16,7 @@ pub enum WorkspaceLocation {
 /// Implement default associate function for Workspace Location enumerate
 impl WorkspaceLocation {
     /// Default value of WorkspaceLocation
-    /// #[allow(dead_code)]
+    #[allow(dead_code)]
     fn default() -> Self {
         WorkspaceLocation::NotRecognize
     }
@@ -80,8 +81,17 @@ impl Workspace {
                 .to_string(),
         }
     }
+
+    /// Strip uri prefix of decoded workspace path
+    pub fn strip_decode_path(&self) -> String {
+        let strip_uri_prefix = Regex::new(r"(file|vscode-remote):[/]+").unwrap();
+        strip_uri_prefix.replace(&self.decode_path, "").to_string()
+    }
 }
 
+/// Implement PartialEq for Workspace
+///
+/// Use Workspace's original path as the crucial condiction
 impl PartialEq for Workspace {
     fn eq(&self, other: &Self) -> bool {
         self.path == other.path
