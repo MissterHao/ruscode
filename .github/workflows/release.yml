@@ -1,0 +1,146 @@
+name: CI
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - "feature/*"
+  pull_request:
+    branches:
+      - "master"
+
+env:
+  CARGO_INCREMENTAL: 0
+  CARGO_NET_RETRY: 10
+  RUSTUP_MAX_RETRIES: 10
+  # Don't emit giant backtraces in the CI logs.
+  RUST_BACKTRACE: short
+
+jobs:
+  lint:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-22.04]
+        rust: [stable]
+
+    steps:
+      - name: Checkout repro
+        uses: actions/checkout@v3
+
+      # nice reusable workflow to get rust ready
+      - name: Setup rust toolchain
+        uses: hecrj/setup-rust-action@master
+        with:
+          rust-version: ${{ matrix.rust }}
+          components: "clippy, rustfmt"
+
+      # make sure all code has been formatted with rustfmt
+      - name: Check formatting (rustfmt)
+        run: cargo fmt --check -- --color always
+
+      # run a collection of lints
+      - name: Check against available lints (clippy)
+        run: cargo clippy --all-targets -- -D warnings
+
+  build:
+    name: Build
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        # os: [ubuntu-latest, macOS-latest, windows-latest]
+        rust: [stable]
+        include:
+          # - os: macOS-latest
+          #   rust: "stable"
+          #   targets: "x86_64-apple-darwin"
+          - os: ubuntu-latest
+            rust: "stable"
+            targets: "x86_64-unknown-linux-musl"
+          # - os: windows-latest
+          #   rust: "stable"
+          #   targets: "x86_64-pc-windows-msvc"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+
+      - name: Set up Rust
+        uses: hecrj/setup-rust-action@v1
+        with:
+          rust-version: ${{ matrix.rust }}
+
+      - name: Cache
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+
+      - name: Build '${{ matrix.os }}'
+        # if: ${{ (matrix.os != 'ubuntu-22.04') }}
+        # echo "Container: ${{ matrix.container }}"
+        run: |
+          echo "OS: ${{ matrix.os }}"
+          cargo build --release --color auto
+
+      - name: Archive Windows binary artifacts
+        if: ${{ (matrix.os == 'windows-latest') }}
+        uses: actions/upload-artifact@v3
+        with:
+          name: window-binary
+          path: target/release/ruscode.exe
+
+      - name: Archive '${{ matrix.os }}' binary artifacts
+        if: ${{ (matrix.os != 'windows-latest') }}
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ matrix.os }}-binary
+          path: target/release/ruscode
+
+  release:
+    name: release
+    needs: [build, lint]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      # In the second job
+      - name: restore-cache
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+
+      - name: package to deb
+        if: ${{ (matrix.os != 'ubuntu-latest') }}
+        run: |
+          # Install packages
+          sudo apt-get install -y gcc dpkg-dev gpg
+
+          mkdir -p ~/deb/ruscode_0.0.0-0_amd64/usr/bin
+          cp target/release/ruscode ~/deb/ruscode_0.0.0-0_amd64/usr/bin/.
+          cp 
+          echo "Package: ruscode
+            Version: 0.0.0
+            Maintainer: MissterHao <henryliking@gmail.com>
+            Depends: libc6
+            Architecture: amd64
+            Homepage: http://example.com
+            Description: A visual studio code's workspaces organizer written in Rust" \
+            > ~/deb/ruscode_0.0.0-0_amd64/DEBIAN/control
+
+          dpkg --build ~/deb/ruscode_0.0.0-0_amd64
+
+          dpkg-deb --info ~/deb/ruscode_0.0.0.deb
+
+          dpkg-deb --contents  ~/deb/ruscode_0.0.0.deb
+
+          sudo apt-get install -f ~/deb/ruscode_0.0.0-0_amd64.deb
+
+          which ruscode
