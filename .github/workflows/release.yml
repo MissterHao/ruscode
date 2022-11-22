@@ -97,9 +97,8 @@ jobs:
           name: ${{ matrix.os }}-binary
           path: target/release/ruscode
 
-
       - name: package to deb
-        if: ${{ (matrix.os != 'ubuntu-latest') }}
+        if: ${{ (matrix.os == 'ubuntu-latest') }}
         run: |
           # Install packages
           sudo apt-get install -y gcc dpkg-dev gpg
