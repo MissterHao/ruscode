@@ -112,9 +112,9 @@ jobs:
 
           dpkg --build ~/deb/ruscode_0.0.0-0_amd64
 
-          dpkg-deb --info ~/deb/ruscode_0.0.0.deb
+          dpkg-deb --info ~/deb/ruscode_0.0.0-0_amd64.deb
 
-          dpkg-deb --contents  ~/deb/ruscode_0.0.0.deb
+          dpkg-deb --contents  ~/deb/ruscode_0.0.0-0_amd64.deb
 
           sudo apt-get install -f ~/deb/ruscode_0.0.0-0_amd64.deb
 
