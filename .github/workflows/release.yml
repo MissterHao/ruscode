@@ -113,7 +113,7 @@ jobs:
             Depends: libc6
             Architecture: amd64
             Homepage: http://example.com
-            Description: A visual studio code's workspaces organizer written in Rust" \
+            Description: A visual studio code\'s workspaces organizer written in Rust" \
             > ~/deb/ruscode_0.0.0-0_amd64/DEBIAN/control
 
           dpkg --build ~/deb/ruscode_0.0.0-0_amd64
