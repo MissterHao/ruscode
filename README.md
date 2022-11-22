@@ -86,17 +86,17 @@ Also, you can find more detail of help text in the middle of screen.
 ### Prerequisite
 
 ### Cargo
-<!-- ### Cargo <a href="https://repology.org/project/du-dust/versions"><img src="https://repology.org/badge/vertical-allrepos/du-dust.svg" alt="Packaging status" align="right"></a> -->
-+ `cargo install du-dust`
+<!-- ### Cargo <a href="https://repology.org/project/ruscode/versions"><img src="https://repology.org/badge/vertical-allrepos/ruscode.svg" alt="Packaging status" align="right"></a> -->
++ `cargo install ruscode`
 
 ### Scoop
 + `scoop install docker`
 
 ### Homebrew ( Mac OS )
-+ `brew install dust`
++ `brew install ruscode`
 
 ### Homebrew ( Linux )
-+ `brew install dust`
++ `brew install ruscode`
 
 ### apt
 + `sudo apt install ruscode`
