@@ -107,14 +107,7 @@ jobs:
           mkdir -p ~/deb/ruscode_0.0.0-0_amd64/DEBIAN/
           touch ~/deb/ruscode_0.0.0-0_amd64/DEBIAN/control
           cp target/release/ruscode ~/deb/ruscode_0.0.0-0_amd64/usr/bin/ruscode
-          echo "Package: ruscode
-            Version: 0.0.0
-            Maintainer: MissterHao <henryliking@gmail.com>
-            Depends: libc6
-            Architecture: amd64
-            Homepage: http://example.com
-            Description: A visual studio codes workspaces organizer written in Rust" \
-            > ~/deb/ruscode_0.0.0-0_amd64/DEBIAN/control
+          cp deb/control ~/deb/ruscode_0.0.0-0_amd64/DEBIAN/control
 
 
           dpkg --build ~/deb/ruscode_0.0.0-0_amd64
