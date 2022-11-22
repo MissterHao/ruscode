@@ -98,10 +98,8 @@ jobs:
         if: ${{ (matrix.os != 'windows-latest') }}
         uses: actions/upload-artifact@v3
         with:
-          name: '${{ matrix.os }}'-binary
+          name: ${{ matrix.os }}-binary
           path: target/release/ruscode
-
-
 
   # unit_tests:
   #   name: Unit tests
