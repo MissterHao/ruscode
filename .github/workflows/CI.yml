@@ -80,18 +80,28 @@ jobs:
             target
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
 
-      - name: Build '${{ matrix.os }}'
-        if: ${{ (matrix.os == 'ubuntu-22.04') && (matrix.container != 'redoxos/redoxer') }}
+      - name: Build '${{ matrix.os}}'
+        # if: ${{ (matrix.os != 'ubuntu-22.04') }}
         run: |
           echo "OS: ${{ matrix.os }}"
           echo "Container: ${{ matrix.container }}"
-          cargo build --color auto
+          cargo build --release --color auto
 
-      - name: Build '${{ matrix.os}}'
-        if: ${{ (matrix.os != 'ubuntu-22.04') }}
-        run: |
-          echo "OS: ${{ matrix.os }}"
-          cargo build --color auto
+      - name: Archive Windows binary artifacts
+        if: ${{ (matrix.os == 'windows-latest') }}
+        uses: actions/upload-artifact@v3
+        with:
+          name: '${{ matrix.os }}'-binary
+          path: target/release/ruscode.exe
+
+      - name: Archive '${{ matrix.os }}' binary artifacts
+        if: ${{ (matrix.os != 'windows-latest') }}
+        uses: actions/upload-artifact@v3
+        with:
+          name: '${{ matrix.os }}'-binary
+          path: target/release/ruscode
+
+
 
   # unit_tests:
   #   name: Unit tests
