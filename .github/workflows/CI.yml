@@ -80,11 +80,11 @@ jobs:
             target
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
 
-      - name: Build '${{ matrix.os}}'
+      - name: Build '${{ matrix.os }}'
         # if: ${{ (matrix.os != 'ubuntu-22.04') }}
+        # echo "Container: ${{ matrix.container }}"
         run: |
           echo "OS: ${{ matrix.os }}"
-          echo "Container: ${{ matrix.container }}"
           cargo build --release --color auto
 
       - name: Archive Windows binary artifacts
