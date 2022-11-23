@@ -20,3 +20,7 @@ Cargo.lock
 
 *.swp
 *.idea/*
+
+# Coverage: grcov
+coverage/
+*.profraw*
