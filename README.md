@@ -40,7 +40,7 @@
     <br>
     <a href="https://codecov.io/gh/mozilla/grcov">
       <img
-        src="https://codecov.io/gh/MissterHao/ruscode/branch/master/graph/badge.svg" alt="codecov" >
+        src="https://codecov.io/gh/MissterHao/ruscode/branch/unit-test/graph/badge.svg" alt="codecov" >
     </a>
         
   </p>

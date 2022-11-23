@@ -18,25 +18,39 @@ jobs:
             coverage
           key: codecov-cargo
 
-      # nice reusable workflow to get rust ready
-      - name: Setup rust toolchain
-        uses: hecrj/setup-rust-action@master
+      - uses: actions-rs/toolchain@v1
         with:
-          rust-version: stable
-          components: "clippy, rustfmt"
+          profile: minimal
+          toolchain: nightly
+          components: llvm-tools-preview
 
-      - name: Run cargo test and Collect coverage
-        env:
-          RUSTFLAGS: -Cinstrument-coverage
-          LLVM_PROFILE_FILE: ruscode-%p-%m.profraw
-        run: |
-          cargo install grcov
-          rustup component add llvm-tools-preview
-          cargo build
-          cargo test
-          grcov . --binary-path ./target/debug/ -s . -t html --branch --ignore-not-existing -o ./coverage/
+      # runs cargo with defaults flags, using the default `lcov` output
+      - uses: Swatinem/fucov@v1
 
-      - name: Upload coverage reports to Codecov with GitHub Action
-        uses: codecov/codecov-action@v3
+      # afterwards, upload the report to codecov
+      - uses: codecov/codecov-action@v1
         with:
-          directory: ./coverage/
+          directory: coverage
+
+      # # nice reusable workflow to get rust ready
+      # - name: Setup rust toolchain
+      #   uses: hecrj/setup-rust-action@master
+      #   with:
+      #     rust-version: stable
+      #     components: "clippy, rustfmt"
+
+      # - name: Run cargo test and Collect coverage
+      #   env:
+      #     RUSTFLAGS: -Cinstrument-coverage
+      #     LLVM_PROFILE_FILE: ruscode-%p-%m.profraw
+      #   run: |
+      #     cargo install grcov
+      #     rustup component add llvm-tools-preview
+      #     cargo build
+      #     cargo test
+      #     grcov . --binary-path ./target/debug/ -s . -t html --branch --ignore-not-existing -o ./coverage/
+
+      # - name: Upload coverage reports to Codecov with GitHub Action
+      #   uses: codecov/codecov-action@v3
+      #   with:
+      #     directory: ./coverage/
