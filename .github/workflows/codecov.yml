@@ -5,10 +5,7 @@ on: [push, pull_request]
 jobs:
   build:
     runs-on: ubuntu-latest
-    name: Test python API
-    defaults:
-      run:
-        working-directory: ./api
+    name: Test Ruscode and Upload to CodeCov
     steps:
     - uses: actions/checkout@v3
     # nice reusable workflow to get rust ready
