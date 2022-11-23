@@ -14,17 +14,13 @@ jobs:
       with:
         rust-version: stable
         components: "clippy, rustfmt"
-    - name: Run cargo test
+    - name: Run cargo test and Collect coverage
       env:
         RUSTFLAGS: -Cinstrument-coverage
         LLVM_PROFILE_FILE: ruscode-%p-%m.profraw
-      run: cargo test
-      
-    - name: Collect coverage
-      env:
-        RUSTFLAGS: -Cinstrument-coverage
-        LLVM_PROFILE_FILE: ruscode-%p-%m.profraw
-      run: grcov . --binary-path ./target/debug/ -s . -t html --branch --ignore-not-existing -o ./coverage/
+      run: |
+        cargo test
+        grcov . --binary-path ./target/debug/ -s . -t html --branch --ignore-not-existing -o ./coverage/
 
     - name: Upload coverage reports to Codecov with GitHub Action
       uses: codecov/codecov-action@v3
