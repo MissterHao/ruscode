@@ -45,7 +45,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest]
+        os: [ubuntu-latest, ubuntu-20.04]
         # os: [ubuntu-latest, macOS-latest, windows-latest]
         rust: [stable]
         include:
@@ -53,6 +53,9 @@ jobs:
           #   rust: "stable"
           #   targets: "x86_64-apple-darwin"
           - os: ubuntu-latest
+            rust: "stable"
+            targets: "x86_64-unknown-linux-musl"
+          - os: ubuntu-20.04
             rust: "stable"
             targets: "x86_64-unknown-linux-musl"
           # - os: windows-latest
@@ -98,7 +101,7 @@ jobs:
           path: target/release/ruscode
 
       - name: package to deb
-        if: ${{ (matrix.os == 'ubuntu-latest') }}
+        # if: ${{ (matrix.os == 'ubuntu-latest') }}
         run: |
           # Install packages
           sudo apt-get install -y gcc dpkg-dev gpg
