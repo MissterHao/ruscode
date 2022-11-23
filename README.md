@@ -23,6 +23,11 @@
       <img
         src="https://img.shields.io/github/downloads/MissterHao/ruscode/total?style=for-the-badge&logo=Rust" alt="Rust badge" >
     </a>
+    <br>
+    <a href="https://codecov.io/gh/MissterHao/ruscode">
+      <img
+        src="https://img.shields.io/codecov/c/gh/MissterHao/ruscode?style=for-the-badge&token=8TU7FS0R56" alt="codecov" >
+    </a>
 
    <br>
     <a href="https://github.com/MissterHao/ruscode">
@@ -36,11 +41,6 @@
     <a href="https://github.com/MissterHao/ruscode">
       <img
         src="https://img.shields.io/badge/MacOS%20Version-Latest-blue?style=for-the-badge&logo=macOS" alt="macOS supported badge" >
-    </a>
-    <br>
-    <a href="https://codecov.io/gh/mozilla/grcov">
-      <img
-        src="https://codecov.io/gh/MissterHao/ruscode/branch/unit-test/graph/badge.svg" alt="codecov" >
     </a>
         
   </p>
