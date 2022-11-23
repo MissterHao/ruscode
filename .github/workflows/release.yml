@@ -101,7 +101,7 @@ jobs:
           path: target/release/ruscode
 
       - name: package to deb
-        if: ${{ (matrix.os != 'windows-latest') ||  }}
+        if: ${{ (matrix.os != 'windows-latest')}}
         run: |
           # Install packages
           sudo apt-get install -y gcc dpkg-dev gpg

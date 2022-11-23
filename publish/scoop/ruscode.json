@@ -1,6 +1,7 @@
 {
     "version": "0.0.0",
-    "url": "https://github.com/lukesampson/cowsay-psh/archive/master.zip",
-    "extract_dir": "cowsay-psh-master",
-    "bin": "cowsay.ps1"
+    "url": "https://github.com/MissterHao/ruscode/suites/9457391905/artifacts/447608886",
+    "extract_dir": "ruscode",
+    "bin": "ruscode.exe",
+    "homepage": "https://github.com/MissterHao/ruscode"
 }
