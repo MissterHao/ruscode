@@ -34,8 +34,8 @@ jobs:
           rustup component add llvm-tools-preview
           cargo build
           cargo test
-          mkdir coverage
-          grcov . --binary-path ./target/debug/ -s . -t lcov --branch --ignore-not-existing -o ./coverage/lcov
+          mkdir coverage-dir
+          grcov . --binary-path ./target/debug/ -s . -t lcov --branch --ignore-not-existing -o ./coverage-dir/lcov
 
       - name: Upload coverage reports to Codecov with GitHub Action
         uses: codecov/codecov-action@v3
