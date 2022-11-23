@@ -6,13 +6,39 @@
   </p>
 
 
-  <p align="center">
-    <a href="https://github.com/MissterHao/ruscode"><img
-        src="https://img.shields.io/github/issues/MissterHao/ruscode?style=flat-square" alt="Github Issue badge" /></a>
-    <a href="https://github.com/MissterHao/ruscode"><img
-        src="https://img.shields.io/github/license/MissterHao/ruscode?style=flat-square" alt="Lience badge" /></a>
-    <a href="https://github.com/MissterHao/ruscode"><img
-        src="https://img.shields.io/badge/rust-%23000000.svg?style=for-the-badge&logo=rust&logoColor=white" alt="Rust badge" ></a>
+  <p align="center" >
+    <a href="https://github.com/MissterHao/ruscode" style="margin-right: 8px;">
+      <img
+        src="https://img.shields.io/github/issues/MissterHao/ruscode?style=for-the-badge" alt="Github Issue badge" />
+    </a>
+    <a href="https://github.com/MissterHao/ruscode" style="margin-right: 8px;">
+      <img
+        src="https://img.shields.io/github/license/MissterHao/ruscode?style=for-the-badge" alt="Lience badge" />
+    </a>
+    <a href="https://github.com/MissterHao/ruscode" style="margin-right: 8px;">
+      <img
+        src="https://img.shields.io/badge/Language-Rust-%23EB6400?style=for-the-badge&logo=Rust" alt="Rust badge" >
+    </a>
+    <a href="https://github.com/MissterHao/ruscode" style="margin-right: 8px;">
+      <img
+        src="https://img.shields.io/github/downloads/MissterHao/ruscode/total?style=for-the-badge&logo=Rust" alt="Rust badge" >
+    </a>
+
+   <br>
+    <a href="https://github.com/MissterHao/ruscode">
+      <img
+        src="https://img.shields.io/badge/Window Version-Latest-blue?style=for-the-badge&logo=Windows" alt="Rust supported badge" >
+    </a>
+    <a href="https://github.com/MissterHao/ruscode">
+      <img
+        src="https://img.shields.io/badge/Ubuntu%20Version-Latest-blue?style=for-the-badge&logo=Ubuntu" alt="Ubuntu supported badge" >
+    </a>
+    <a href="https://github.com/MissterHao/ruscode">
+      <img
+        src="https://img.shields.io/badge/MacOS%20Version-Latest-blue?style=for-the-badge&logo=macOS" alt="macOS supported badge" >
+    </a>
+
+    
   </p>
 </div>
 
@@ -32,15 +58,15 @@ Awesome!
 
 ## Table of contents
 
-- [📦 Install](#-install)
+- [🎯 Features](#-features)
+- [📦 How to install](#-how-to-install)
 - [🏹 Usage](#-usage)
 - [📜 Licence](#-licence)
 - [✨ Creator](#-creator)
 - [🌈 Contributors](#-contributors)
 - [🌟 Star History](#-star-history)
 
-## 📦 Install
-## 🏹 Usage
+## 🎯 Features
 
 There are two mode in management page:
 + Search Mode
@@ -55,8 +81,46 @@ Also, you can find more detail of help text in the middle of screen.
 ### Detail Mode
 
 
+## 📦 How to install
+
+### Prerequisite
+
+### Cargo
+<!-- ### Cargo <a href="https://repology.org/project/ruscode/versions"><img src="https://repology.org/badge/vertical-allrepos/ruscode.svg" alt="Packaging status" align="right"></a> -->
++ `cargo install ruscode`
+
+### Scoop
++ `scoop install docker`
+
+### Homebrew ( Mac OS )
++ `brew install ruscode`
+
+### Homebrew ( Linux )
++ `brew install ruscode`
+
+### apt
++ `sudo apt install ruscode`
+
+### Download
++ Download Linux/Mac binary from Releases
++ Unzip file: tar -xvf [[download file name]].tar.gz
++ Move file to executable path: sudo mv dust /usr/local/bin/
+
+
+## 🏹 Usage
+```
+ruscode - A visual studio code's workspaces organizer written in Rust
+
+Usage: ruscode.exe [OPTIONS]
+
+Options:
+  -d, --disable-splash-screen  Show splash screen or not
+  -h, --help                   Print help information
+  -V, --version                Print version information
+```
+
 ## 📜 Licence
-MIT
+This project is licensed under the [MIT License](https://github.com/MissterHao/ruscode/blob/master/LICENSE)
 
 ## ✨ Creator
 - [MissterHao ( Hao-Wei )](https://www.linkedin.com/in/hao-wei-li/)
