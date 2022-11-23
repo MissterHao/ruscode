@@ -47,7 +47,7 @@ impl SystemPaths {
     /// Application local folder for not Windows Operation System
     #[cfg(not(target_os = "windows"))]
     pub fn application_data_folder() -> String {
-        String::new("/var/lib/ruscode")
+        String::from("/var/lib/ruscode")
     }
 
     /// Database path

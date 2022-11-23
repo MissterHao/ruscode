@@ -37,8 +37,12 @@
       <img
         src="https://img.shields.io/badge/MacOS%20Version-Latest-blue?style=for-the-badge&logo=macOS" alt="macOS supported badge" >
     </a>
-
-    
+    <br>
+    <a href="https://codecov.io/gh/mozilla/grcov">
+      <img
+        src="https://codecov.io/gh/MissterHao/ruscode/branch/unit-test/graph/badge.svg" alt="codecov" >
+    </a>
+        
   </p>
 </div>
 
