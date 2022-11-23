@@ -68,9 +68,11 @@ where
     f.render_widget(tabs, chunks[0]);
 
     // Render tab content to terminal
+    // Settings tab is in todo list, allow single match for current version
+    #[allow(clippy::single_match)]
     match app.tabs.index {
         0 => draw_management_tab(f, app, chunks[1]),
-        1 => draw_settings_tab(f, app, chunks[1]),
+        // 1 => draw_settings_tab(f, app, chunks[1]),
         _ => {}
     };
 }
@@ -120,6 +122,7 @@ where
 /// * `f` - Franme
 /// * `app` - App struct
 /// * `area` - area of frame
+#[allow(dead_code)]
 fn draw_settings_tab<B>(_f: &mut Frame<B>, _app: &mut App, area: Rect)
 where
     B: Backend,

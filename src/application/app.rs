@@ -61,7 +61,8 @@ impl<'a> App<'a> {
     pub fn new(title: &'a str, show_splash_screen: bool) -> App<'a> {
         App {
             title,
-            tabs: TabsState::new(vec!["Workspaces", "Settings"]),
+            tabs: TabsState::new(vec!["Workspaces"]),
+            // tabs: TabsState::new(vec!["Workspaces", "Settings"]),
             status: ApplicationStatus::PrepareEnvironment,
             control_mode: ApplicationControlMode::default(),
             show_splash_screen,
