@@ -1,0 +1,35 @@
+name: CodeCov workflow
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: Test python API
+    defaults:
+      run:
+        working-directory: ./api
+    steps:
+    - uses: actions/checkout@v3
+    # nice reusable workflow to get rust ready
+    - name: Setup rust toolchain
+      uses: hecrj/setup-rust-action@master
+      with:
+        rust-version: stable
+        components: "clippy, rustfmt"
+    - name: Run cargo test
+      env:
+        RUSTFLAGS: -Cinstrument-coverage
+        LLVM_PROFILE_FILE: ruscode-%p-%m.profraw
+      run: cargo test
+      
+    - name: Collect coverage
+      env:
+        RUSTFLAGS: -Cinstrument-coverage
+        LLVM_PROFILE_FILE: ruscode-%p-%m.profraw
+      run: grcov . --binary-path ./target/debug/ -s . -t html --branch --ignore-not-existing -o ./coverage/
+
+    - name: Upload coverage reports to Codecov with GitHub Action
+      uses: codecov/codecov-action@v3
+      with:
+        directory: ./coverage/

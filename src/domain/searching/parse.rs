@@ -77,8 +77,14 @@ impl SearchingStrategy {
 #[cfg(test)]
 mod test_searching_strategy_mod {
 
+    use std::vec;
+
     use super::*;
 
+    #[test]
+    fn test_new_str_into_searching_strategy() {
+        assert_eq!(SearchingStrategy::new("from-new"), "from-new".into());
+    }
     #[test]
     fn test_default_str_into_searching_strategy() {
         assert_eq!(SearchingStrategy::default(), "".into());
@@ -133,5 +139,35 @@ mod test_searching_strategy_mod {
     #[test]
     fn test_string_into_default_searching_strategy() {
         assert_eq!(SearchingStrategy::default(), String::from("").into());
+    }
+
+    /// Test default value return from default function SearchingStrategy
+    #[test]
+    fn test_default_searching_strategy_value() {
+        let s = SearchingStrategy::default();
+        assert_eq!(s.path, String::new());
+        assert_eq!(s.tags, Vec::<String>::new());
+        assert_eq!(s.searching_type, SearchingStrategyType::All);
+    }
+
+    /// Test 4 return enumerate varient from SearchingStrategyType::parse
+    #[test]
+    fn test_searchingstrategytype_parse() {
+        assert_eq!(
+            SearchingStrategyType::parse(1, 1),
+            SearchingStrategyType::PlainTextMixTags
+        );
+        assert_eq!(
+            SearchingStrategyType::parse(1, 0),
+            SearchingStrategyType::PlainText
+        );
+        assert_eq!(
+            SearchingStrategyType::parse(0, 1),
+            SearchingStrategyType::Tags
+        );
+        assert_eq!(
+            SearchingStrategyType::parse(0, 0),
+            SearchingStrategyType::All
+        );
     }
 }
