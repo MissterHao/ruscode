@@ -119,3 +119,5 @@ jobs:
           sudo apt-get install -f ~/deb/ruscode_0.0.0-0_amd64.deb
 
           which ruscode
+
+          ruscode --help
