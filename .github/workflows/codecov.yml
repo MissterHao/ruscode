@@ -35,9 +35,9 @@ jobs:
           cargo build
           cargo test
           mkdir coverage-dir
-          grcov . --binary-path ./target/debug/ -s . -t lcov --branch --ignore-not-existing -o ./coverage-dir/lcov
+          grcov . --binary-path ./target/debug/ -s . -t lcov --branch --ignore-not-existing -o lcov.info
 
       - name: Upload coverage reports to Codecov with GitHub Action
         uses: codecov/codecov-action@v3
         with:
-          directory: ./coverage-dir/
+          # directory: ./coverage-dir/
