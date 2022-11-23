@@ -1,0 +1,7 @@
+Package: ruscode
+Version: 0.0.0
+Maintainer: HaoWeiLi 晧暐 <henryliking@gmail.com>
+Depends: libc6
+Architecture: all
+Homepage: https://github.com/MissterHao/ruscode
+Description: A visual studio code's workspaces organizer written in Rust

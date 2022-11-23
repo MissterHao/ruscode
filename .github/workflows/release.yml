@@ -105,19 +105,103 @@ jobs:
 
           mkdir -p ~/deb/ruscode_0.0.0-0_amd64/usr/bin
           mkdir -p ~/deb/ruscode_0.0.0-0_amd64/DEBIAN/
-          touch ~/deb/ruscode_0.0.0-0_amd64/DEBIAN/control
+          cp publish/deb/ruscode/DEBIAN/control ~/deb/ruscode_0.0.0-0_amd64/DEBIAN/control
           cp target/release/ruscode ~/deb/ruscode_0.0.0-0_amd64/usr/bin/ruscode
-          cp deb/control ~/deb/ruscode_0.0.0-0_amd64/DEBIAN/control
 
 
+          # Build Package
           dpkg --build ~/deb/ruscode_0.0.0-0_amd64
 
+          # Check Package Information
           dpkg-deb --info ~/deb/ruscode_0.0.0-0_amd64.deb
 
+          # Lists the contents of the filesystem tree archive portion of the package archive.
           dpkg-deb --contents  ~/deb/ruscode_0.0.0-0_amd64.deb
 
+          # Install 
           sudo apt-get install -f ~/deb/ruscode_0.0.0-0_amd64.deb
 
+          # Display installed package
           which ruscode
 
+          # Test basic command
           ruscode --help
+
+      - name: Archive '${{ matrix.os }}' deb artifacts
+        if: ${{ (matrix.os != 'windows-latest') }}
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ matrix.os }}-deb
+          path: deb/ruscode_0.0.0-0_amd64.deb
+
+  # build-windows:
+  #   name: Build Windows
+  #   runs-on: ${{ matrix.os }}
+  #   strategy:
+  #     matrix:
+  #       os: [windows-latest]
+  #       # os: [ubuntu-latest, macOS-latest, windows-latest]
+  #       rust: [stable]
+  #       include:
+  #         - os: macOS-latest
+  #           rust: "stable"
+  #           targets: "x86_64-apple-darwin"
+  #         - os: ubuntu-latest
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v1
+
+  #     - name: Set up Rust
+  #       uses: hecrj/setup-rust-action@v1
+  #       with:
+  #         rust-version: ${{ matrix.rust }}
+
+  #     - name: Cache
+  #       uses: actions/cache@v2
+  #       with:
+  #         path: |
+  #           ~/.cargo/registry
+  #           ~/.cargo/git
+  #           target
+  #         key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+
+  #     - name: Build '${{ matrix.os }}'
+  #       run: |
+  #         echo "OS: ${{ matrix.os }}"
+  #         cargo build --release --color auto
+
+  #     - name: Archive Windows binary artifacts
+  #       if: ${{ (matrix.os == 'windows-latest') }}
+  #       uses: actions/upload-artifact@v3
+  #       with:
+  #         name: window-binary
+  #         path: target/release/ruscode.exe
+
+  #     - name: package to deb
+  #       if: ${{ (matrix.os == 'windows-latest') }}
+  #       run: |
+  #         # Install packages
+  #         sudo apt-get install -y gcc dpkg-dev gpg
+
+  #         mkdir -p ~/deb/ruscode_0.0.0-0_amd64/usr/bin
+  #         mkdir -p ~/deb/ruscode_0.0.0-0_amd64/DEBIAN/
+  #         cp publish/deb/ruscode/DEBIAN/control ~/deb/ruscode_0.0.0-0_amd64/DEBIAN/control
+  #         cp target/release/ruscode ~/deb/ruscode_0.0.0-0_amd64/usr/bin/ruscode
+
+  #         # Build Package
+  #         dpkg --build ~/deb/ruscode_0.0.0-0_amd64
+
+  #         # Check Package Information
+  #         dpkg-deb --info ~/deb/ruscode_0.0.0-0_amd64.deb
+
+  #         # Lists the contents of the filesystem tree archive portion of the package archive.
+  #         dpkg-deb --contents  ~/deb/ruscode_0.0.0-0_amd64.deb
+
+  #         # Install
+  #         sudo apt-get install -f ~/deb/ruscode_0.0.0-0_amd64.deb
+
+  #         # Display installed package
+  #         which ruscode
+
+  #         # Test basic command
+  #         ruscode --help
