@@ -11,13 +11,22 @@
       <img
         src="https://img.shields.io/github/issues/MissterHao/ruscode?style=for-the-badge" alt="Github Issue badge" />
     </a>
+    <a href="https://github.com/MissterHao/ruscode/actions/workflows/release.yml" style="margin-right: 8px;">
+      <img
+        src="https://img.shields.io/github/workflow/status/MissterHao/ruscode/release?style=for-the-badge" alt="Github Release Action status badge" />
+    </a>
+    <a href="https://codecov.io/gh/MissterHao/ruscode" style="margin-right: 8px;">
+      <img
+        src="https://img.shields.io/codecov/c/gh/MissterHao/ruscode?style=for-the-badge&token=8TU7FS0R56" alt="codecov" >
+    </a>
+    <a href="https://github.com/MissterHao/ruscode">
+      <img
+        src="https://img.shields.io/badge/Language-Rust-%23EB6400?style=for-the-badge&logo=Rust" alt="Rust badge" >
+    </a>
+    <br>
     <a href="https://github.com/MissterHao/ruscode" style="margin-right: 8px;">
       <img
         src="https://img.shields.io/github/license/MissterHao/ruscode?style=for-the-badge" alt="Lience badge" />
-    </a>
-    <a href="https://github.com/MissterHao/ruscode" style="margin-right: 8px;">
-      <img
-        src="https://img.shields.io/badge/Language-Rust-%23EB6400?style=for-the-badge&logo=Rust" alt="Rust badge" >
     </a>
     <a href="https://github.com/MissterHao/ruscode" style="margin-right: 8px;">
       <img
