@@ -36,15 +36,5 @@ mod test_folder_observer {
     fn test_last_modified() {
         // let sys_time = last_modified();
         // let last_modified_secs = sys_time.duration_since(UNIX_EPOCH).unwrap().as_secs();
-
-        // println!(
-        //     "{:?}",
-        //     Utc.timestamp_opt(last_modified_secs as i64, 0)
-        //         .unwrap()
-        //         .format("%Y/%m/%d")
-        //         .to_string()
-        // );
-
-        // println!("{:?}", last_modified_secs);
     }
 }

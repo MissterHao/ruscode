@@ -20,8 +20,9 @@ clean:
 .PHONY: test
 test:
 	set LLVM_PROFILE_FILE=ruscode-%p-%m.profraw 
-	set RUSTFLAGS=-Cinstrument-coverage
+	set "RUSTFLAGS=-Cinstrument-coverage -Ccodegen-units=1 -Clink-dead-code -Coverflow-checks=on"
 	cargo build
 	cargo test
+	set
 	grcov . --binary-path ./target/debug/ -s . -t html --branch --ignore-not-existing -o ./coverage/
 	
