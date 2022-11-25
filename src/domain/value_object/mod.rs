@@ -16,7 +16,15 @@ mod test_workspacejson {
         };
         assert_eq!(_w.folder, String::from("folder"));
     }
-
+    #[test]
+    fn test_workspacejson_string_debug_format() {
+        format!(
+            "{:?}",
+            WorkspaceJson {
+                folder: String::from("")
+            }
+        );
+    }
     #[test]
     fn test_workspacejson_is_deserializeable() {
         let _w = WorkspaceJson {
