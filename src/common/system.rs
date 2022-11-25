@@ -106,7 +106,7 @@ mod test_system {
     #[cfg(target_os = "linux")]
     #[test]
     fn test_systempaths_on_linux_re_format() {
-        let output = SystemPaths::windows_user_home_dir();
+        let output = SystemPaths::ubuntu_user_home_dir();
         let path = str::from_utf8(&output.stdout).unwrap();
         let re = regex::Regex::new(r"/home/.*").unwrap();
         assert!(re.is_match(path));
