@@ -17,7 +17,7 @@
     </a>
     <a href="https://codecov.io/gh/MissterHao/ruscode" style="margin-right: 8px;">
       <img
-        src="https://img.shields.io/codecov/c/gh/MissterHao/ruscode?style=for-the-badge&token=8TU7FS0R56" alt="codecov" >
+        src="https://img.shields.io/codecov/c/gh/MissterHao/ruscode?style=for-the-badge&token=8TU7FS0R56&logo=Codecov" alt="codecov" >
     </a>
     <a href="https://github.com/MissterHao/ruscode">
       <img
