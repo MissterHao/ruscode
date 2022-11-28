@@ -34,7 +34,7 @@ impl SystemPaths {
     pub fn vscode_workspace_storage_path() -> String {
         let home = SystemPaths::home_dir();
         format!(
-            "{}/AppData/Roaming/Code/User/workspaceStorage/**/workspace.json",
+            "{}/AppData/Roaming/Code/User/workspaceS`rage/**/workspace.json",
             home,
         )
     }
@@ -158,7 +158,7 @@ mod test_system {
     #[test]
     fn test_application_data_folder_path_on_linux() {
         let path = SystemPaths::application_data_folder();
-        let re = regex::Regex::new("/var/lib/ruscode").unwrap();
+        let re = regex::Regex::new("~/.ruscode").unwrap();
         assert!(re.is_match(path.as_str()));
     }
 
