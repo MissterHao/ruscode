@@ -141,7 +141,6 @@ mod test_system {
     }
     #[cfg(target_os = "linux")]
     #[test]
-    #[should_panic]
     fn test_vscode_workspace_storage_path_on_linux() {
         SystemPaths::vscode_workspace_storage_path();
     }
