@@ -207,7 +207,7 @@ impl<'a> App<'a> {
     /// Init environment
     pub fn init_environment(&mut self) -> Result<(), ApplicationError> {
         // Default app folder create
-        init_application_folders().expect("Failed to create application folders.");
+        init_application_folders(None).expect("Failed to create application folders.");
 
         // Make sure database is always exists
         self.create_database(SystemPaths::database().as_str())

@@ -61,3 +61,31 @@ pub fn get_db_connection(path: &str) -> Result<Connection, DatabaseError> {
 
     Ok(db_connection)
 }
+
+#[cfg(test)]
+mod test_database {
+    use std::fs;
+
+    use super::{create_database, get_db_connection};
+
+    #[test]
+    fn test_database_should_create_succesfully() {
+        let testing_database_path = "./test-database.sqlite3";
+        if create_database(testing_database_path).is_ok() {
+            fs::remove_file(testing_database_path).unwrap();
+        } else {
+            panic!("Database create failed!")
+        }
+    }
+
+    #[test]
+    fn test_database_connection_should_succesfully() {
+        let testing_database_path = "./test-database-conn.sqlite3";
+        if create_database(testing_database_path).is_ok() {
+            get_db_connection(testing_database_path).expect("Cannot get database connection!");
+            fs::remove_file(testing_database_path).unwrap();
+        } else {
+            panic!("Database create failed!")
+        }
+    }
+}
