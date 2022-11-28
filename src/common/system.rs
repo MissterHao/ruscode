@@ -34,7 +34,7 @@ impl SystemPaths {
     pub fn vscode_workspace_storage_path() -> String {
         let home = SystemPaths::home_dir();
         format!(
-            "{}/AppData/Roaming/Code/User/workspaceS`rage/**/workspace.json",
+            "{}/AppData/Roaming/Code/User/workspaceStorage/**/workspace.json",
             home,
         )
     }
