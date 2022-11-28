@@ -5,14 +5,16 @@ use std::str;
 pub struct SystemPaths {}
 
 impl SystemPaths {
-    fn windows_user_home_dir() -> Output {
+    #[cfg(target_os = "windows")]
+    fn user_home_dir() -> Output {
         Command::new("cmd")
             .args(["/C", "echo %userprofile%"])
             .output()
             .expect("failed to execute process")
     }
 
-    fn ubuntu_user_home_dir() -> Output {
+    #[cfg(target_os = "linux")]
+    fn user_home_dir() -> Output {
         Command::new("sh")
             .arg("-c")
             .arg("getent passwd \"$USER\" | cut -d: -f6 ")
@@ -21,27 +23,29 @@ impl SystemPaths {
     }
 
     pub fn home_dir() -> String {
-        let output = if cfg!(target_os = "windows") {
-            SystemPaths::windows_user_home_dir()
-        } else {
-            SystemPaths::ubuntu_user_home_dir()
-        };
+        let output = SystemPaths::user_home_dir();
 
         let home = strip_trailing_newline(str::from_utf8(&output.stdout).unwrap());
 
         home.to_string().replace("\\\\", "\\")
     }
 
+    #[cfg(target_os = "windows")]
     pub fn vscode_workspace_storage_path() -> String {
         let home = SystemPaths::home_dir();
-        if cfg!(target_os = "windows") {
-            format!(
-                "{}/AppData/Roaming/Code/User/workspaceStorage/**/workspace.json",
-                home,
-            )
-        } else {
-            todo!()
-        }
+        format!(
+            "{}/AppData/Roaming/Code/User/workspaceStorage/**/workspace.json",
+            home,
+        )
+    }
+
+    #[cfg(target_os = "linux")]
+    pub fn vscode_workspace_storage_path() -> String {
+        let home = SystemPaths::home_dir();
+        format!(
+            "{}/.config/Code/User/workspaceStorage/**/workspace.json",
+            home
+        )
     }
 
     // Application local folder
@@ -53,9 +57,9 @@ impl SystemPaths {
     }
 
     /// Application local folder for not Windows Operation System
-    #[cfg(not(target_os = "windows"))]
+    #[cfg(target_os = "linux")]
     pub fn application_data_folder() -> String {
-        String::from("/var/lib/ruscode")
+        String::from("~/.ruscode")
     }
 
     /// Database path
@@ -65,7 +69,11 @@ impl SystemPaths {
 
     /// Database path
     pub fn database() -> String {
-        format!("{}/data.db", SystemPaths::database_folder())
+        if cfg!(test) {
+            format!("{}/data.db", SystemPaths::database_folder())
+        } else {
+            format!("{}/data-test.db", SystemPaths::database_folder())
+        }
     }
 }
 
@@ -87,12 +95,12 @@ mod test_system {
     #[cfg(target_os = "windows")]
     #[test]
     fn test_systempaths_on_windows() {
-        SystemPaths::windows_user_home_dir();
+        SystemPaths::user_home_dir();
     }
     #[cfg(target_os = "windows")]
     #[test]
     fn test_systempaths_on_windows_re_format() {
-        let output = SystemPaths::windows_user_home_dir();
+        let output = SystemPaths::user_home_dir();
         let path = str::from_utf8(&output.stdout).unwrap();
         let re = regex::Regex::new(r".*\\Users\\.*").unwrap();
         assert!(re.is_match(path));
@@ -101,12 +109,12 @@ mod test_system {
     #[cfg(target_os = "linux")]
     #[test]
     fn test_systempaths_on_linux() {
-        SystemPaths::ubuntu_user_home_dir();
+        SystemPaths::user_home_dir();
     }
     #[cfg(target_os = "linux")]
     #[test]
     fn test_systempaths_on_linux_re_format() {
-        let output = SystemPaths::ubuntu_user_home_dir();
+        let output = SystemPaths::user_home_dir();
         let path = str::from_utf8(&output.stdout).unwrap();
         let re = regex::Regex::new(r"/home/.*").unwrap();
         assert!(re.is_match(path));
