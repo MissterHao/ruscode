@@ -114,10 +114,10 @@ Also, you can find more detail of help text in the middle of screen.
 <!-- ### apt
 + `sudo apt install ruscode` -->
 
-### Download
+<!-- ### Download
 + Download Linux/Mac binary from Releases
 + Unzip file: tar -xvf [[download file name]].tar.gz
-+ Move file to executable path: sudo mv dust /usr/local/bin/
++ Move file to executable path: sudo mv ruscode /usr/local/bin/ -->
 
 
 ## 🏹 Usage
