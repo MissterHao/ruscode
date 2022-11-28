@@ -1,10 +1,16 @@
 # This is a makefile just for maintainer who is using windows operation system as developing environment.
+all: build
 
-.PHONY: all
-all: 
+
+.PHONY: build
+build: 
 	set RUSTFLAGS=
 	set LLVM_PROFILE_FILE=
-	cargo run	
+	cargo build
+
+.PHONY: run
+run: build
+	cargo run
 
 .PHONY: lint
 lint: 
