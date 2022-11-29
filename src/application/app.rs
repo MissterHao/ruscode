@@ -158,6 +158,7 @@ impl<'a> App<'a> {
     }
 
     /// Open workspace by vscode
+    #[cfg(target_os = "windows")]
     fn open_workspace(&mut self) {
         match self.select_workspace() {
             Some(workspace) => {
@@ -168,6 +169,27 @@ impl<'a> App<'a> {
                     // https://github.com/rust-lang/rust/issues/95957
                     Command::new("cmd")
                         .arg("/C")
+                        .arg("code")
+                        .arg(workspace.strip_decode_path())
+                        .spawn()
+                        .expect("code command failed to start");
+                }
+            }
+            None => {}
+        }
+    }
+
+    #[cfg(target_os = "linux")]
+    fn open_workspace(&mut self) {
+        match self.select_workspace() {
+            Some(workspace) => {
+                if workspace.location_type
+                    == crate::domain::entity::workspace::WorkspaceLocation::Local
+                {
+                    // Use cmd as program instead
+                    // https://github.com/rust-lang/rust/issues/95957
+                    Command::new("bash")
+                        .arg("-c")
                         .arg("code")
                         .arg(workspace.strip_decode_path())
                         .spawn()
