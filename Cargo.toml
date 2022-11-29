@@ -1,6 +1,6 @@
 [package]
 name = "ruscode"
-version = "0.1.0"
+version = "1.0.0"
 edition = "2021"
 authors = ["Hao-Wei"]
 readme = "README.md"
@@ -37,3 +37,4 @@ chrono = "0.4.23"
 lto = true
 codegen-units = 1
 opt-level = 'z'
+panic = "abort"

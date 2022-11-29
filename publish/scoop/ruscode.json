@@ -1,0 +1,6 @@
+{
+    "version": "1.0.0",
+    "url": "http://public-url/window-binary.zip",
+    "bin": "ruscode.exe",
+    "homepage": "https://github.com/MissterHao/ruscode"
+}

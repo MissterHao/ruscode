@@ -1,0 +1,154 @@
+name: release
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - "feature/*"
+    tags:
+      - "v[0-9]+.[0-9]+.[0-9]+"
+      - "v0"
+
+env:
+  CARGO_INCREMENTAL: 0
+  CARGO_NET_RETRY: 10
+  RUSTUP_MAX_RETRIES: 10
+  # Don't emit giant backtraces in the CI logs.
+  RUST_BACKTRACE: short
+
+jobs:
+  lint:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-22.04]
+        rust: [stable]
+
+    steps:
+      - name: Checkout repro
+        uses: actions/checkout@v3
+
+      # nice reusable workflow to get rust ready
+      - name: Setup rust toolchain
+        uses: hecrj/setup-rust-action@master
+        with:
+          rust-version: ${{ matrix.rust }}
+          components: "clippy, rustfmt"
+
+      # make sure all code has been formatted with rustfmt
+      - name: Check formatting (rustfmt)
+        run: cargo fmt --check -- --color always
+
+      # run a collection of lints
+      - name: Check against available lints (clippy)
+        run: cargo clippy --all-targets -- -D warnings
+
+  build:
+    name: Build
+    needs: lint
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, ubuntu-20.04, windows-latest]
+        # os: [ubuntu-latest, macOS-latest, windows-latest]
+        rust: [stable]
+        include:
+          # - os: macOS-latest
+          #   rust: "stable"
+          #   targets: "x86_64-apple-darwin"
+          - os: ubuntu-latest
+            rust: "stable"
+            targets: "x86_64-unknown-linux-musl"
+          - os: ubuntu-20.04
+            rust: "stable"
+            targets: "x86_64-unknown-linux-musl"
+          - os: windows-latest
+            rust: "stable"
+            targets: "x86_64-pc-windows-msvc"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+
+      - name: Set env
+        run: | 
+          echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+          echo "STRIP_RELEASE_VERSION=${GITHUB_REF#refs/*/v}" >> $GITHUB_ENV
+
+      - name: Set up Rust
+        uses: hecrj/setup-rust-action@v1
+        with:
+          rust-version: ${{ matrix.rust }}
+
+      - name: Cache
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+
+      # Build Binary
+      - name: Build '${{ matrix.os }}-${{ env.RELEASE_VERSION }}'
+        run: |
+          echo "OS: ${{ matrix.os }} "
+          cargo build --release --color auto
+
+      # Strip Debug Information
+      - name: Strip debug information '${{ matrix.os }}-${{ env.RELEASE_VERSION }}'
+        if: ${{ (matrix.os != 'windows-latest') }}
+        run: |
+          echo "OS: ${{ matrix.os }} "
+          strip target/release/ruscode
+
+      # Archive Binary
+      - name: Archive Windows binary artifacts
+        if: ${{ (matrix.os == 'windows-latest') }}
+        uses: actions/upload-artifact@v3
+        with:
+          name: window-binary-${{ env.RELEASE_VERSION }}
+          path: target/release/ruscode.exe
+
+      - name: Archive '${{ matrix.os }}' binary artifacts
+        if: ${{ (matrix.os != 'windows-latest') }}
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ matrix.os }}-binary
+          path: target/release/ruscode
+
+      - name: package to deb
+        if: ${{ (matrix.os != 'windows-latest')}}
+        run: |
+          # Install packages
+          sudo apt-get install -y gcc dpkg-dev gpg
+
+          mkdir -p ~/deb/ruscode_${{ env.STRIP_RELEASE_VERSION }}-0_amd64/usr/bin
+          mkdir -p ~/deb/ruscode_${{ env.STRIP_RELEASE_VERSION }}-0_amd64/DEBIAN/
+          cp publish/deb/ruscode/DEBIAN/control ~/deb/ruscode_${{ env.STRIP_RELEASE_VERSION }}-0_amd64/DEBIAN/control
+          cp target/release/ruscode ~/deb/ruscode_${{ env.STRIP_RELEASE_VERSION }}-0_amd64/usr/bin/ruscode
+
+
+          # Build Package
+          dpkg --build ~/deb/ruscode_${{ env.STRIP_RELEASE_VERSION }}-0_amd64
+
+          # Check Package Information
+          dpkg-deb --info ~/deb/ruscode_${{ env.STRIP_RELEASE_VERSION }}-0_amd64.deb
+
+          # Lists the contents of the filesystem tree archive portion of the package archive.
+          dpkg-deb --contents  ~/deb/ruscode_${{ env.STRIP_RELEASE_VERSION }}-0_amd64.deb
+
+          # Install 
+          sudo apt-get install -f ~/deb/ruscode_${{ env.STRIP_RELEASE_VERSION }}-0_amd64.deb
+
+          # Display installed package
+          which ruscode
+
+          # Test basic command
+          ruscode --help
+
+      - name: Archive '${{ matrix.os }}' deb artifacts
+        if: ${{ (matrix.os != 'windows-latest') }}
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ matrix.os }}-deb
+          path: ~/deb/ruscode_${{ env.STRIP_RELEASE_VERSION }}-0_amd64.deb
