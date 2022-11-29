@@ -16,7 +16,6 @@ pub enum WorkspaceLocation {
 /// Implement default associate function for Workspace Location enumerate
 impl WorkspaceLocation {
     /// Default value of WorkspaceLocation
-    #[allow(dead_code)]
     fn default() -> Self {
         WorkspaceLocation::NotRecognize
     }
@@ -32,7 +31,7 @@ impl From<&str> for WorkspaceLocation {
             WorkspaceLocation::Remote
         } else {
             // Default
-            WorkspaceLocation::NotRecognize
+            WorkspaceLocation::default()
         }
     }
 }
@@ -133,5 +132,109 @@ impl From<&str> for Workspace {
                 .unwrap()
                 .to_string(),
         }
+    }
+}
+
+#[cfg(test)]
+mod test_entity_workspace {
+
+    use super::*;
+
+    // Test Associate Functions
+    #[test]
+    fn test_workspace_new_associate_function() {
+        let w: Workspace = Workspace::new();
+        assert_eq!(w.path, String::new());
+        assert_eq!(w.decode_path, String::new());
+        assert_eq!(w.location_type, WorkspaceLocation::default());
+        assert_eq!(w.title, String::new());
+    }
+
+    #[test]
+    fn test_workspace_init_from_dbrow() {}
+
+    // Test Methods
+    #[test]
+    fn test_workspace_strip_decode_path_successfully() {
+        let w: Workspace = Workspace::from("file://中文/ファイル");
+        assert_eq!(String::from("中文/ファイル"), w.strip_decode_path());
+    }
+
+    // Test `From` trait
+    #[test]
+    fn test_workspace_convert_from_workspacejson() {
+        let folder_path = String::from("file://a/b/c");
+        let wj = WorkspaceJson {
+            folder: folder_path.clone(),
+        };
+        let w: Workspace = wj.into();
+        assert_eq!(w.path, folder_path);
+    }
+
+    #[test]
+    fn test_workspace_convert_from_strref() {
+        let w: Workspace = "file://a/b/c/d.d.d/e".into();
+        assert_eq!(w.location_type, WorkspaceLocation::Local);
+        assert_eq!(w.path, String::from("file://a/b/c/d.d.d/e"));
+        assert_eq!(w.title, String::from("e"));
+    }
+
+    // Test macros
+    #[test]
+    fn test_workspace_string_formatable() {
+        format!("{:?}", Workspace::from(""));
+    }
+
+    #[test]
+    #[allow(clippy::redundant_clone)]
+    fn test_workspace_cloneable() {
+        let _ = Workspace::new().clone();
+    }
+
+    #[test]
+    fn test_workspace_eq() {
+        assert!(Workspace::new() == Workspace::new())
+    }
+}
+
+#[cfg(test)]
+mod test_entity_workspacelocation {
+
+    use super::*;
+
+    // Test Associate Functions
+    #[test]
+    fn test_workspacelocation_default_associate_function() {
+        let w = WorkspaceLocation::default();
+        assert_eq!(w, WorkspaceLocation::NotRecognize);
+    }
+
+    // Test `From` trait
+    #[test]
+    fn test_workspacelocation_convert_from_strref() {
+        let w1: WorkspaceLocation = "file://".into();
+        let w2: WorkspaceLocation = "vscode-remote://".into();
+        let w3: WorkspaceLocation = "not-in-the-if-else-branches".into();
+
+        assert_eq!(w1, WorkspaceLocation::Local);
+        assert_eq!(w2, WorkspaceLocation::Remote);
+        assert_eq!(w3, WorkspaceLocation::default());
+    }
+
+    // Test macros
+    #[test]
+    fn test_workspacelocation_string_formatable() {
+        format!("{:?}", WorkspaceLocation::default());
+    }
+
+    #[test]
+    #[allow(clippy::redundant_clone)]
+    fn test_workspacelocation_cloneable() {
+        let _ = WorkspaceLocation::default().clone();
+    }
+
+    #[test]
+    fn test_workspacelocation_eq() {
+        assert!(WorkspaceLocation::default() == WorkspaceLocation::default());
     }
 }

@@ -81,7 +81,6 @@ impl WorkspaceRepository {
         let db_connection = get_db_connection(SystemPaths::database().as_str())
             .expect("Cannot get database connection.");
 
-        println!("{sql}");
         let mut stmt = db_connection
             .prepare(&sql)
             .expect("Failed to select all workspaces.");

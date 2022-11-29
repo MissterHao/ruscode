@@ -11,13 +11,22 @@
       <img
         src="https://img.shields.io/github/issues/MissterHao/ruscode?style=for-the-badge" alt="Github Issue badge" />
     </a>
+    <a href="https://github.com/MissterHao/ruscode/actions/workflows/release.yml" style="margin-right: 8px;">
+      <img
+        src="https://img.shields.io/github/workflow/status/MissterHao/ruscode/release?style=for-the-badge" alt="Github Release Action status badge" />
+    </a>
+    <a href="https://codecov.io/gh/MissterHao/ruscode" style="margin-right: 8px;">
+      <img
+        src="https://img.shields.io/codecov/c/gh/MissterHao/ruscode?style=for-the-badge&token=8TU7FS0R56&logo=Codecov" alt="codecov" >
+    </a>
+    <a href="https://github.com/MissterHao/ruscode">
+      <img
+        src="https://img.shields.io/badge/Language-Rust-%23EB6400?style=for-the-badge&logo=Rust" alt="Rust badge" >
+    </a>
+    <br>
     <a href="https://github.com/MissterHao/ruscode" style="margin-right: 8px;">
       <img
         src="https://img.shields.io/github/license/MissterHao/ruscode?style=for-the-badge" alt="Lience badge" />
-    </a>
-    <a href="https://github.com/MissterHao/ruscode" style="margin-right: 8px;">
-      <img
-        src="https://img.shields.io/badge/Language-Rust-%23EB6400?style=for-the-badge&logo=Rust" alt="Rust badge" >
     </a>
     <a href="https://github.com/MissterHao/ruscode" style="margin-right: 8px;">
       <img
@@ -37,8 +46,12 @@
       <img
         src="https://img.shields.io/badge/MacOS%20Version-Latest-blue?style=for-the-badge&logo=macOS" alt="macOS supported badge" >
     </a>
-
-    
+    <br>
+    <!-- <a href="https://codecov.io/gh/MissterHao/ruscode">
+      <img
+        src="https://codecov.io/gh/MissterHao/ruscode/branch/unit-test/graph/badge.svg" alt="codecov" >
+    </a> -->
+        
   </p>
 </div>
 
@@ -92,19 +105,19 @@ Also, you can find more detail of help text in the middle of screen.
 ### Scoop
 + `scoop install docker`
 
-### Homebrew ( Mac OS )
-+ `brew install ruscode`
+<!-- ### Homebrew ( Mac OS )
++ `brew install ruscode` -->
 
-### Homebrew ( Linux )
-+ `brew install ruscode`
+<!-- ### Homebrew ( Linux )
++ `brew install ruscode` -->
 
-### apt
-+ `sudo apt install ruscode`
+<!-- ### apt
++ `sudo apt install ruscode` -->
 
-### Download
+<!-- ### Download
 + Download Linux/Mac binary from Releases
 + Unzip file: tar -xvf [[download file name]].tar.gz
-+ Move file to executable path: sudo mv dust /usr/local/bin/
++ Move file to executable path: sudo mv ruscode /usr/local/bin/ -->
 
 
 ## 🏹 Usage
