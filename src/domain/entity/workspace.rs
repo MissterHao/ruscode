@@ -82,7 +82,7 @@ impl Workspace {
 
     /// Strip uri prefix of decoded workspace path
     pub fn strip_decode_path(&self) -> String {
-        let strip_uri_prefix = Regex::new(r"(file|vscode-remote):[/]+").unwrap();
+        let strip_uri_prefix = Regex::new(r"(file|vscode-remote):[/][/]").unwrap();
         strip_uri_prefix.replace(&self.decode_path, "").to_string()
     }
 }
