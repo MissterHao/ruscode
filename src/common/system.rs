@@ -22,12 +22,22 @@ impl SystemPaths {
             .expect("failed to execute process")
     }
 
+    #[cfg(target_os = "windows")]
     pub fn home_dir() -> String {
         let output = SystemPaths::user_home_dir();
 
         let home = strip_trailing_newline(str::from_utf8(&output.stdout).unwrap());
 
         home.to_string().replace("\\\\", "\\")
+    }
+
+    #[cfg(target_os = "linux")]
+    pub fn home_dir() -> String {
+        let output = SystemPaths::user_home_dir();
+
+        let home = strip_trailing_newline(str::from_utf8(&output.stdout).unwrap());
+
+        format!("/{}", home.to_string().replace("\\\\", "\\"))
     }
 
     #[cfg(target_os = "windows")]
