@@ -47,10 +47,6 @@
         src="https://img.shields.io/badge/MacOS%20Version-Latest-blue?style=for-the-badge&logo=macOS" alt="macOS supported badge" >
     </a>
     <br>
-    <!-- <a href="https://codecov.io/gh/MissterHao/ruscode">
-      <img
-        src="https://codecov.io/gh/MissterHao/ruscode/branch/unit-test/graph/badge.svg" alt="codecov" >
-    </a> -->
         
   </p>
 </div>
@@ -99,25 +95,10 @@ Also, you can find more detail of help text in the middle of screen.
 ### Prerequisite
 
 ### Cargo
-<!-- ### Cargo <a href="https://repology.org/project/ruscode/versions"><img src="https://repology.org/badge/vertical-allrepos/ruscode.svg" alt="Packaging status" align="right"></a> -->
 + `cargo install ruscode`
 
 ### Scoop
 + `scoop install docker`
-
-<!-- ### Homebrew ( Mac OS )
-+ `brew install ruscode` -->
-
-<!-- ### Homebrew ( Linux )
-+ `brew install ruscode` -->
-
-<!-- ### apt
-+ `sudo apt install ruscode` -->
-
-<!-- ### Download
-+ Download Linux/Mac binary from Releases
-+ Unzip file: tar -xvf [[download file name]].tar.gz
-+ Move file to executable path: sudo mv ruscode /usr/local/bin/ -->
 
 
 ## 🏹 Usage
