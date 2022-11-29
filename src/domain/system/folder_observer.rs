@@ -14,14 +14,18 @@ pub fn last_modified(workspace: &Workspace) -> Result<String, SystemError> {
     let mut entries = result?;
     entries.sort_by_cached_key(|f| f.metadata().unwrap().modified().unwrap());
 
-    let last_modified_secs = entries[0]
-        .metadata()
-        .unwrap()
-        .modified()
-        .unwrap()
-        .duration_since(UNIX_EPOCH)
-        .unwrap()
-        .as_secs();
+    let last_modified_secs = if !(entries.is_empty()) {
+        entries[0]
+            .metadata()
+            .unwrap()
+            .modified()
+            .unwrap()
+            .duration_since(UNIX_EPOCH)
+            .unwrap()
+            .as_secs()
+    } else {
+        0u64
+    };
 
     Ok(Utc
         .timestamp_opt(last_modified_secs as i64, 0)
