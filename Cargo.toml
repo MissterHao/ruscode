@@ -9,7 +9,7 @@ description = "ruscode - A visual studio code's workspaces organizer written in 
 homepage = "https://github.com/MissterHao/ruscode"
 repository = "https://github.com/MissterHao/ruscode"
 documentation = "https://github.com/MissterHao/ruscode"
-keywords = ["development-tools", "tui", "cli", "terminal", "command-line-utilities"]
+keywords = ["development-tools", "tui", "cli", "terminal", "command-line", "utilities"]
 exclude = ["assets/*", ".github", "publish/*"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
