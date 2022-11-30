@@ -42,10 +42,10 @@
       <img
         src="https://img.shields.io/badge/Ubuntu%20Version-Latest-blue?style=for-the-badge&logo=Ubuntu" alt="Ubuntu supported badge" >
     </a>
-    <a href="https://github.com/MissterHao/ruscode">
+    <!-- <a href="https://github.com/MissterHao/ruscode">
       <img
         src="https://img.shields.io/badge/MacOS%20Version-Latest-blue?style=for-the-badge&logo=macOS" alt="macOS supported badge" >
-    </a>
+    </a> -->
     <br>
         
   </p>
@@ -87,18 +87,52 @@ Also, you can find more detail of help text in the middle of screen.
 
 ### Search Mode
 
+Just type anything to search your workspaces!  
+
+ruscode will use the searching text that you typed to filter any workspaces matched. Current version ( v1.0.0 ) support searching by path. In the future version, ruscode will supported tag-searching soon.  
+
 ### Detail Mode
 
+You can enter detail mode by using right arrow key on the selected workspace.
+
+In detail mode, you can find out more detail information about the selected workspace and information of folder also.  
 
 ## 📦 How to install
 
 ### Prerequisite
 
+ruscode is a utility for **[Visual Studio Code](https://code.visualstudio.com/download)**. Therefore, you must install Visual Studio Code.  
+
+Make sure that the path of Visual Studio Code binary file is in the system path, so that ruscode can use `code <workspace path>` while you hitting `enter` key.
+
 ### Cargo
 + `cargo install ruscode`
 
-### Scoop
-+ `scoop install docker`
+### Download
+
+You can also download release binary from [github release page](https://github.com/MissterHao/ruscode/releases).
+
+#### Ubuntu
+
+If you are a Ubuntu user
+```bash
+# Use curl to download binary file
+# curl -sSLJO https://github.com/MissterHao/ruscode/releases/download/v1.0.0/ubuntu-latest-binary.zip
+# Use wget to download binary file
+wget --no-check-certificate --content-disposition https://github.com/MissterHao/ruscode/releases/download/v1.0.0/ubuntu-latest-binary.zip -q
+
+unzip ubunti-latest-binary.zip
+chmod +x ruscode
+./ruscode
+```
+
+#### Windows
+
+If you are a Windows user
+
+1. Download zip file from [release page](https://github.com/MissterHao/ruscode/releases).
+2. Unzip it!
+3. double click the ruscode.exe file or use CLI to open it.
 
 
 ## 🏹 Usage
