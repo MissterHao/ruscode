@@ -2,7 +2,7 @@
   <h1>ruscode</h1>
 
   <p>
-    A visual studio code's workspaces organizer written in Rust<br />Supports Linux, macOS, and Windows.
+    A visual studio code's workspaces organizer written in Rust<br />Supports Linux, and Windows.
   </p>
 
 
