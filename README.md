@@ -5,7 +5,9 @@
     A visual studio code's workspaces organizer written in Rust<br />Supports Linux, and Windows.
   </p>
 
-
+  <img src="https://socialify.git.ci/MissterHao/ruscode/image?description=1&font=Inter&language=1&name=1&owner=1&pattern=Circuit%20Board&theme=Light" alt="ruscode" width="640" height="320" />
+  <br>
+  
   <p align="center" >
     <a href="https://github.com/MissterHao/ruscode" style="margin-right: 8px;">
       <img
