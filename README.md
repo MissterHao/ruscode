@@ -132,7 +132,7 @@ chmod +x ruscode
 
 If you are a Windows user
 
-1. Download zip file from [release page](https://github.com/MissterHao/ruscode/releases).
+1. Download zip file from [release page](https://github.com/MissterHao/ruscode/releases). <!-- markdown-link-check-disable-line -->
 2. Unzip it!
 3. double click the ruscode.exe file or use CLI to open it.
 
@@ -153,10 +153,10 @@ Options:
 This project is licensed under the [MIT License](https://github.com/MissterHao/ruscode/blob/master/LICENSE)
 
 ## ✨ Creator
-- [MissterHao ( Hao-Wei )](https://www.linkedin.com/in/hao-wei-li/)
+- [MissterHao ( Hao-Wei )](https://www.linkedin.com/in/hao-wei-li/) <!-- markdown-link-check-disable-line -->
 
 ## 🌈 Contributors
-- [MissterHao ( Hao-Wei )](https://www.linkedin.com/in/hao-wei-li/)
+- [MissterHao ( Hao-Wei )](https://www.linkedin.com/in/hao-wei-li/) <!-- markdown-link-check-disable-line -->
 
 ## 🌟 Star History
 [![Star History Chart](https://api.star-history.com/svg?repos=MissterHao/ruscode&type=Date)](https://star-history.com/#MissterHao/ruscode&Date)
