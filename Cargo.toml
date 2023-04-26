@@ -18,7 +18,7 @@ exclude = ["assets/*", ".github", "publish/*"]
 tui = { version = "0.19.0", features = ["crossterm"], default-features = false }
 crossterm = "0.26.0"
 log = "0.4"
-tui-logger = "0.8.1"
+tui-logger = "0.9.1"
 clap = { version = "4.0.22", features = ["derive"] }
 glob = "0.3.0"
 urlencoding = "2.1.2"
